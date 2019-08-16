@@ -22,12 +22,22 @@ public class ClassController {
     @Autowired
     private ClassService classService;
 
+    @Autowired
+    private AcademicYearService academicYearService;
+
 
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ResponseEntity<MessageBody> findAllClass(HttpServletRequest request) {
+    public ResponseEntity<MessageBody> findAllClass(HttpServletRequest request,
+                                                    @RequestParam(name = "id", required = false) Long classId,
+                                                    @RequestParam(name = "name", required = false) String className,
+                                                    @RequestParam(name = "academicYearId", required = false) Long academicYearId) {
 
 
-        List<Class> classList = classService.findAll();
+        Class classSearchCriteria = new Class();
+        classSearchCriteria.setId(classId);
+        classSearchCriteria.setName(className);
+        classSearchCriteria.setAcademicYear(academicYearId == null || academicYearId == 0 ? null : academicYearService.findAcademicYearById(academicYearId));
+        List<Class> classList = classService.findAll(classSearchCriteria);
 
         MessageBody messageBody = MessageBody.getInstance();
 
@@ -39,12 +49,12 @@ public class ClassController {
     }
 
     @RequestMapping(value = "/findById", method = RequestMethod.GET)
-    public ResponseEntity<MessageBody> findClassById(HttpServletRequest request,@RequestParam(name = "id" , required = true) Long classId) {
+    public ResponseEntity<MessageBody> findClassById(HttpServletRequest request, @RequestParam(name = "id", required = true) Long classId) {
 
 
         Class clasS = classService.findClassById(classId);
 
-        if(clasS == null){
+        if (clasS == null) {
             throw new ResourceException(HttpStatus.NOT_FOUND, "class_not_found");
         }
 
@@ -60,7 +70,8 @@ public class ClassController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<MessageBody> createClass(HttpServletRequest request, @RequestBody ClassResource classResource) {
 
-        if (classResource.getName() == null) {
+        if (classResource.getName() == null
+                || classResource.getAcademicYearId() == null) {
             throw new ResourceException(HttpStatus.BAD_REQUEST, "invalid_request");
         }
 

@@ -5,6 +5,7 @@ import com.decoders.school.entities.Class;
 import com.decoders.school.entities.Section;
 import com.decoders.school.exception.ResourceException;
 import com.decoders.school.resource.SectionResource;
+import com.decoders.school.service.AcademicYearService;
 import com.decoders.school.service.ClassService;
 import com.decoders.school.service.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +27,23 @@ public class SectionController {
     @Autowired
     private ClassService classService;
 
+    @Autowired
+    private AcademicYearService academicYearService;
+
 
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ResponseEntity<MessageBody> findAllSection(HttpServletRequest request,@RequestParam(name = "classId" , required = false) Long classId) {
+    public ResponseEntity<MessageBody> findAllSection(HttpServletRequest request,
+                                                      @RequestParam(name = "id", required = false) Long id,
+                                                      @RequestParam(name = "name", required = false) String sectionName,
+                                                      @RequestParam(name = "classId", required = false) Long classId,
+                                                      @RequestParam(name = "academicYearId", required = false) Long academicYearId) {
 
-        Class clasS = null;
-
-        List<Section> sectionList = null;
-
-        if(classId != null && classId !=0){
-            clasS = classService.findClassById(classId);
-            sectionList = sectionService.findAll(clasS);
-        }else{
-            sectionList = sectionService.findAll();
-        }
+        Section sectionSearchCriteria = new Section();
+        sectionSearchCriteria.setId(id);
+        sectionSearchCriteria.setName(sectionName);
+        sectionSearchCriteria.setClasS(classId == null || classId == 0 ? null : classService.findClassById(classId));
+        sectionSearchCriteria.setAcademicYear(academicYearId == null || academicYearId == 0 ? null : academicYearService.findAcademicYearById(academicYearId));
+        List<Section> sectionList = sectionService.findAll(sectionSearchCriteria);
 
         MessageBody messageBody = MessageBody.getInstance();
 
@@ -73,7 +77,8 @@ public class SectionController {
     public ResponseEntity<MessageBody> createSection(HttpServletRequest request, @RequestBody SectionResource sectionResource) {
 
         if (sectionResource.getName() == null
-                || sectionResource.getClassId() == null) {
+                || sectionResource.getClassId() == null
+                || sectionResource.getAcademicYearId() == null) {
             throw new ResourceException(HttpStatus.BAD_REQUEST, "invalid_request");
         }
 
@@ -95,7 +100,8 @@ public class SectionController {
 
         if (sectionResource.getId() == null
                 || sectionResource.getName() == null
-                || sectionResource.getClassId() == null) {
+                || sectionResource.getClassId() == null
+                || sectionResource.getAcademicYearId() == null) {
             throw new ResourceException(HttpStatus.BAD_REQUEST, "invalid_request");
         }
 

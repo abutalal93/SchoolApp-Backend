@@ -9,11 +9,17 @@ import com.decoders.school.repository.ClassRepo;
 import com.decoders.school.repository.StatusRepo;
 import com.decoders.school.service.ClassService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,6 +42,36 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
+    public List<Class> findAll(Class clasS) {
+        List<Class> classList = classRepo.findAll(new Specification<Class>() {
+
+            @Override
+            public Predicate toPredicate(Root<Class> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+
+                List<Predicate> predicates = new ArrayList<>();
+
+                if(clasS.getId() != null){
+                    predicates.add(cb.equal(root.get("id"), clasS.getId() ));
+                }
+
+                if(clasS.getName() != null){
+                    predicates.add(cb.like(cb.lower(root.get("name")), "%" + clasS.getName().toLowerCase() + "%"));
+                }
+
+                if(clasS.getAcademicYear() != null){
+                    predicates.add(cb.equal(root.get("academicYear"), clasS.getAcademicYear() ));
+                }
+
+                predicates.add(cb.notEqual(root.get("status"), statusRepo.findStatusByCode("DELETED") ));
+
+                return cb.and(predicates.toArray(new Predicate[0]));
+            }
+        });
+
+        return classList;
+    }
+
+    @Override
     public Class findClass(String name, AcademicYear academicYear) {
         return classRepo.findClass(name, academicYear);
     }
@@ -48,7 +84,7 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public Class save(Class clasS) {
 
-        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYear(LocalDateTime.now());
+        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYearById(clasS.getAcademicYear().getId());
 
         if (currentAcademicYear == null) {
             throw new ResourceException(HttpStatus.NOT_FOUND, "academic_year_not_found");
@@ -67,7 +103,7 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public Class update(Class clasS) {
-        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYear(LocalDateTime.now());
+        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYearById(clasS.getAcademicYear().getId());
 
         if (currentAcademicYear == null) {
             throw new ResourceException(HttpStatus.NOT_FOUND, "academic_year_not_found");
@@ -86,6 +122,7 @@ public class ClassServiceImpl implements ClassService {
         }
 
         updatedClass.setName(clasS.getName());
+        updatedClass.setAcademicYear(currentAcademicYear);
         return updatedClass;
     }
 

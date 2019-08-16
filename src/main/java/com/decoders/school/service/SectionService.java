@@ -10,6 +10,8 @@ import java.util.List;
 public interface SectionService {
     public List<Section> findAll();
 
+    public List<Section> findAll(Section section);
+
     public List<Section> findAll(Class clasS);
 
     public Section findSection(String name, Class clasS, AcademicYear academicYear);

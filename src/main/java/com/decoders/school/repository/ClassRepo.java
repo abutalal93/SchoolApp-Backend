@@ -3,13 +3,14 @@ package com.decoders.school.repository;
 import com.decoders.school.entities.AcademicYear;
 import com.decoders.school.entities.Class;
 import com.decoders.school.entities.Status;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ClassRepo extends CrudRepository<Class, Long> {
+public interface ClassRepo extends CrudRepository<Class, Long> , JpaSpecificationExecutor {
     @Query("select cls from Class cls where cls.status.id <> 3")
     public List<Class> findAll();
 

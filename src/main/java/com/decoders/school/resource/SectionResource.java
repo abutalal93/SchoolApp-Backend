@@ -25,6 +25,9 @@ public class SectionResource {
 
     private Long academicYearId;
 
+    private String academicYearAlias;
+
+
     public Long getId() {
         return id;
     }
@@ -81,6 +84,14 @@ public class SectionResource {
         this.className = className;
     }
 
+    public String getAcademicYearAlias() {
+        return academicYearAlias;
+    }
+
+    public void setAcademicYearAlias(String academicYearAlias) {
+        this.academicYearAlias = academicYearAlias;
+    }
+
     public static SectionResource toResource(Section section)
     {
         SectionResource sectionResource = new SectionResource();
@@ -95,6 +106,7 @@ public class SectionResource {
 
         if(section.getAcademicYear() != null) {
             sectionResource.setAcademicYearId(section.getAcademicYear().getId());
+            sectionResource.setAcademicYearAlias(section.getAcademicYear().getAlias());
         }
 
         if(section.getClasS() != null) {

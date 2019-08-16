@@ -5,13 +5,14 @@ import com.decoders.school.entities.Class;
 import com.decoders.school.entities.Section;
 import com.decoders.school.entities.Section;
 import com.decoders.school.entities.Status;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface SectionRepo extends CrudRepository<Section, Long> {
+public interface SectionRepo extends CrudRepository<Section, Long> , JpaSpecificationExecutor {
 
     @Query("select sec from Section sec where sec.status.id <> 3")
     public List<Section> findAll();

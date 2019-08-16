@@ -9,6 +9,8 @@ import java.util.List;
 public interface ClassService {
     public List<Class> findAll();
 
+    public List<Class> findAll(Class clasS);
+
     public Class findClass(String name, AcademicYear academicYear);
 
     public Class findClassByNameAndAcademicYearAndStatus(String name, AcademicYear academicYear, Status status);

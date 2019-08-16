@@ -21,6 +21,8 @@ public class ClassResource {
 
     private Long academicYearId;
 
+    private String academicYearAlias;
+
     public Long getId() {
         return id;
     }
@@ -61,6 +63,14 @@ public class ClassResource {
         this.academicYearId = academicYearId;
     }
 
+    public String getAcademicYearAlias() {
+        return academicYearAlias;
+    }
+
+    public void setAcademicYearAlias(String academicYearAlias) {
+        this.academicYearAlias = academicYearAlias;
+    }
+
     public static ClassResource toResource(Class clasS)
     {
         ClassResource classResource = new ClassResource();
@@ -75,6 +85,7 @@ public class ClassResource {
 
         if(clasS.getAcademicYear() != null) {
             classResource.setAcademicYearId(clasS.getAcademicYear().getId());
+            classResource.setAcademicYearAlias(clasS.getAcademicYear().getAlias());
         }
 
         return classResource;
