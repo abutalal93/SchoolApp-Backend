@@ -8,6 +8,9 @@ import java.util.List;
 public interface StudentService {
     public List<Student> findAll();
 
+    public List<Student> findAll(Student student);
+
+
     public Student save(Student student);
 
     public Student update(Student academicYear);
@@ -15,4 +18,7 @@ public interface StudentService {
     public Student delete(Student academicYear);
 
     public List<Student> findStudent(String mobile, Status status);
+
+    public Student findStudentById(Long id);
+
 }

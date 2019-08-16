@@ -29,6 +29,14 @@ public class Section implements Serializable {
     @JoinColumn(name = "sec_acc_yr_id", nullable = false)
     private AcademicYear academicYear;
 
+    public Section(){
+
+    }
+
+    public Section(Class clasS) {
+        this.clasS = clasS;
+    }
+
     public Long getId() {
         return id;
     }

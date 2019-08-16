@@ -1,6 +1,7 @@
 package com.decoders.school.service.impl;
 
 import com.decoders.school.entities.AcademicYear;
+import com.decoders.school.entities.Class;
 import com.decoders.school.entities.Section;
 import com.decoders.school.entities.Status;
 import com.decoders.school.entities.Student;
@@ -12,11 +13,17 @@ import com.decoders.school.repository.StudentRepo;
 import com.decoders.school.service.StatusService;
 import com.decoders.school.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,9 +48,47 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> findAll(Student student) {
+        List<Student> studentList = studentRepo.findAll(new Specification<Student>() {
+
+            @Override
+            public Predicate toPredicate(Root<Student> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+
+                List<Predicate> predicates = new ArrayList<>();
+
+                if(student.getId() != null){
+                    predicates.add(cb.equal(root.get("id"), student.getId() ));
+                }
+
+                if(student.getName() != null){
+                    predicates.add(cb.like(cb.lower(root.get("name")), "%" + student.getName().toLowerCase() + "%"));
+                }
+
+                if(student.getSection() != null && student.getSection().getClasS() != null){
+                    predicates.add(cb.equal(root.get("section").<Class> get("clasS"), student.getSection().getClasS()));
+                }
+
+                if(student.getSection() != null && student.getSection().getId() != null){
+                    predicates.add(cb.equal(root.get("section"), student.getSection() ));
+                }
+
+                if(student.getAcademicYear() != null){
+                    predicates.add(cb.equal(root.get("academicYear"), student.getAcademicYear() ));
+                }
+
+                predicates.add(cb.notEqual(root.get("status"), statusRepo.findStatusByCode("DELETED") ));
+
+                return cb.and(predicates.toArray(new Predicate[0]));
+            }
+        });
+
+        return studentList;
+    }
+
+    @Override
     public Student save(Student student) {
 
-        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYear(LocalDateTime.now());
+        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYearById(student.getAcademicYear().getId());
 
         if(currentAcademicYear == null){
             throw new ResourceException(HttpStatus.NOT_FOUND,"academic_year_not_found");
@@ -70,15 +115,15 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student update(Student student) {
-        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYear(LocalDateTime.now());
+        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYearById(student.getAcademicYear().getId());
 
         if(currentAcademicYear == null){
             throw new ResourceException(HttpStatus.NOT_FOUND,"academic_year_not_found");
         }
 
-        Student currentStudent = studentRepo.findStudentById(student.getId());
+        Student updateStudent = studentRepo.findStudentById(student.getId());
 
-        if(currentStudent == null){
+        if(updateStudent == null){
             throw new ResourceException(HttpStatus.NOT_FOUND,"student_not_found");
         }
 
@@ -88,23 +133,23 @@ public class StudentServiceImpl implements StudentService {
             throw new ResourceException(HttpStatus.NOT_FOUND,"section_not_found");
         }
 
-        currentStudent.setFatherMobile(student.getFatherMobile());
-        currentStudent.setMotherMobile(student.getMotherMobile());
-        currentStudent.setGender(student.getGender());
-        currentStudent.setName(student.getName());
-        currentStudent.setNationalNumber(student.getNationalNumber());
-        currentStudent.setSection(student.getSection());
-        return currentStudent;
+        Student currentStudent = studentRepo.findStudentByNationalNumberAndAcademicYearAndStatusNot(student.getNationalNumber(),currentAcademicYear, statusRepo.findStatusByCode("DELETED"));
+
+        if (currentStudent != null && !currentStudent.getId().equals(student.getId())) {
+            throw new ResourceException(HttpStatus.FOUND, "student_found");
+        }
+
+        updateStudent.setFatherMobile(student.getFatherMobile());
+        updateStudent.setMotherMobile(student.getMotherMobile());
+        updateStudent.setGender(student.getGender());
+        updateStudent.setName(student.getName());
+        updateStudent.setNationalNumber(student.getNationalNumber());
+        updateStudent.setSection(student.getSection());
+        return updateStudent;
     }
 
     @Override
     public Student delete(Student student) {
-        AcademicYear currentAcademicYear = academicYearRepo.findAcademicYear(LocalDateTime.now());
-
-        if(currentAcademicYear == null){
-            throw new ResourceException(HttpStatus.NOT_FOUND,"academic_year_not_found");
-        }
-
         Student currentStudent = studentRepo.findStudentById(student.getId());
 
         if(currentStudent == null){
@@ -118,5 +163,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Student> findStudent(String mobile, Status status) {
         return studentRepo.findStudent(mobile, status);
+    }
+
+    @Override
+    public Student findStudentById(Long id) {
+        return studentRepo.findStudentById(id);
     }
 }

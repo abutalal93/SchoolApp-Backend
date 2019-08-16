@@ -1,5 +1,7 @@
 package com.decoders.school.resource;
 
+import com.decoders.school.entities.AcademicYear;
+import com.decoders.school.entities.Section;
 import com.decoders.school.entities.Student;
 import com.decoders.school.entities.Status;
 
@@ -23,6 +25,9 @@ public class StudentResource {
     private Long sectionId;
     private String sectionName;
     private Long academicYearId;
+    private String academicYearAlias;
+    private Long classId;
+    private String className;
 
     public Long getId() {
         return id;
@@ -128,6 +133,30 @@ public class StudentResource {
         this.academicYearId = academicYearId;
     }
 
+    public String getAcademicYearAlias() {
+        return academicYearAlias;
+    }
+
+    public void setAcademicYearAlias(String academicYearAlias) {
+        this.academicYearAlias = academicYearAlias;
+    }
+
+    public Long getClassId() {
+        return classId;
+    }
+
+    public void setClassId(Long classId) {
+        this.classId = classId;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
     public static StudentResource toResource(Student student) {
         StudentResource studentResource = new StudentResource();
 
@@ -148,10 +177,16 @@ public class StudentResource {
         if (student.getSection() != null) {
             studentResource.setSectionId(student.getSection().getId());
             studentResource.setSectionName(student.getSection().getName());
+
+            if(student.getSection().getClasS() != null){
+                studentResource.setClassId(student.getSection().getClasS().getId());
+                studentResource.setClassName(student.getSection().getClasS().getName());
+            }
         }
 
         if (student.getAcademicYear() != null) {
             studentResource.setAcademicYearId(student.getAcademicYear().getId());
+            studentResource.setAcademicYearAlias(student.getAcademicYear().getAlias());
         }
 
         return studentResource;
@@ -178,10 +213,22 @@ public class StudentResource {
         student.setFatherMobile(this.fatherMobile);
         student.setMotherMobile(this.motherMobile);
 
-        if (statusId == null) {
+        if (statusId != null) {
             Status status = new Status();
             status.setId(this.id);
             student.setStatus(status);
+        }
+
+        if(this.academicYearId != null){
+            AcademicYear academicYear = new AcademicYear();
+            academicYear.setId(this.academicYearId);
+            student.setAcademicYear(academicYear);
+        }
+
+        if(sectionId != null){
+            Section section = new Section();
+            section.setId(this.sectionId);
+            student.setSection(section);
         }
         return student;
     }
