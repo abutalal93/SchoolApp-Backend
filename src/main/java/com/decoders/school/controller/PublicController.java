@@ -12,6 +12,7 @@ import com.decoders.school.service.AnnouncementTypeService;
 import com.decoders.school.service.SchoolService;
 import com.decoders.school.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,13 +55,13 @@ public class PublicController {
 
         AnnouncementType announcementType = announcementTypeService.findAnnouncementTypeByCode("PUBLIC");
 
-        List<Announcement> announcementList = announcementService.findAnnouncement(announcementType, statusService.findStatusByCode("ACTIVE"));
+        Page<Announcement> announcementList = announcementService.findAnnouncement(announcementType, statusService.findStatusByCode("ACTIVE"),null,null);
 
         MessageBody messageBody = MessageBody.getInstance();
 
         messageBody.setStatus("200");
         messageBody.setText("OK");
-        messageBody.setBody(AnnouncementResource.toResource(announcementList));
+        messageBody.setBody(AnnouncementResource.toResource(announcementList.getContent()));
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
 }

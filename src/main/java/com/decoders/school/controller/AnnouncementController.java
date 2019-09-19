@@ -2,19 +2,18 @@ package com.decoders.school.controller;
 
 import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
-import com.decoders.school.entities.AcademicYear;
 import com.decoders.school.entities.Announcement;
 import com.decoders.school.entities.AnnouncementImage;
+import com.decoders.school.entities.AnnouncementType;
 import com.decoders.school.entities.School;
 import com.decoders.school.exception.ResourceException;
-import com.decoders.school.resource.AcademicYearResource;
-import com.decoders.school.resource.AnnouncementImageResource;
 import com.decoders.school.resource.AnnouncementResource;
+import com.decoders.school.resource.PageResource;
 import com.decoders.school.security.JwtTokenProvider;
 import com.decoders.school.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +24,8 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/announcement")
+public class AnnouncementController {
 
     @Autowired
     private SchoolService schoolService;
@@ -41,7 +40,7 @@ public class AdminController {
     private AnnouncementImageService announcementImageService;
 
     @Autowired
-    private AcademicYearService academicYearService;
+    private AnnouncementTypeService announcementTypeService;
 
     @Autowired
     private StatusService statusService;
@@ -50,7 +49,7 @@ public class AdminController {
     private Environment environment;
 
 
-    @RequestMapping(value = "/announcement/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<MessageBody> createAnnouncement(HttpServletRequest request, @RequestBody AnnouncementResource announcementResource) {
 
         if (announcementResource.getTitle() == null
@@ -92,9 +91,27 @@ public class AdminController {
 
         MessageBody messageBody = MessageBody.getInstance();
 
-        messageBody.setStatus("20");
+        messageBody.setStatus("200");
         messageBody.setText("OK");
         messageBody.setBody(announcementResource);
+
+        return new ResponseEntity<>(messageBody, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/public/findAll", method = RequestMethod.GET)
+    public ResponseEntity<MessageBody> createAnnouncement(HttpServletRequest request,
+                                                          @RequestParam(value = "page", required = false) Integer page,
+                                                          @RequestParam(value = "size", required = false) Integer size) {
+
+        AnnouncementType announcementType = announcementTypeService.findAnnouncementTypeByCode("PUBLIC");
+
+        Page<Announcement> announcementList = announcementService.findAnnouncement(announcementType, statusService.findStatusByCode("ACTIVE"), page, size);
+
+        MessageBody messageBody = MessageBody.getInstance();
+
+        messageBody.setStatus("200");
+        messageBody.setText("OK");
+        messageBody.setBody(new PageResource(announcementList.getTotalElements(), announcementList.getTotalPages(), AnnouncementResource.toResource(announcementList.getContent())));
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }

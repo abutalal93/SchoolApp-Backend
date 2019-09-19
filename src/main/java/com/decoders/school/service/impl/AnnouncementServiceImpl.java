@@ -11,6 +11,10 @@ import com.decoders.school.service.AnnouncementService;
 import com.decoders.school.service.SchoolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,13 +40,25 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
 
     @Override
-    public List<Announcement> findAll() {
-        return announcementRepo.findAll();
+    public Page<Announcement> findAll(Integer page, Integer size) {
+        if (page == null) page = 0;
+        if (size == null) size = 10;
+
+        Pageable pageable = new PageRequest(page, size, Sort.Direction.DESC, "id");
+        Page<Announcement> bottomPage = announcementRepo.findAll(pageable);
+
+        return bottomPage;
     }
 
     @Override
-    public List<Announcement> findAnnouncement(AnnouncementType announcementType, Status status) {
-        return announcementRepo.findAnnouncementByAnnouncementTypeAndStatusOrderByCreateDateDesc(announcementType, status);
+    public Page<Announcement> findAnnouncement(AnnouncementType announcementType, Status status, Integer page, Integer size) {
+        if (page == null) page = 0;
+        if (size == null) size = 10;
+
+        Pageable pageable = new PageRequest(page, size, Sort.Direction.DESC, "id");
+        Page<Announcement> bottomPage = announcementRepo.findAnnouncementByAnnouncementTypeAndStatusOrderByCreateDateDesc(announcementType, status, pageable);
+
+        return bottomPage;
     }
 
     @Override

@@ -2,13 +2,14 @@ package com.decoders.school.service;
 
 import com.decoders.school.entities.*;
 import com.decoders.school.resource.AnnouncementImageResource;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface AnnouncementService {
-    public List<Announcement> findAll();
+    public Page<Announcement> findAll(Integer page , Integer size);
 
-    public List<Announcement> findAnnouncement(AnnouncementType announcementType, Status status);
+    public Page<Announcement> findAnnouncement(AnnouncementType announcementType, Status status, Integer page , Integer size);
 
     public Announcement save(Announcement announcement);
 }
