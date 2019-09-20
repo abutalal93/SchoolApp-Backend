@@ -1,14 +1,15 @@
 package com.decoders.school.service.impl;
 
-import com.decoders.school.entities.AcademicYear;
+import com.decoders.school.entities.*;
 import com.decoders.school.entities.Class;
-import com.decoders.school.entities.Status;
 import com.decoders.school.exception.ResourceException;
-import com.decoders.school.repository.AcademicYearRepo;
-import com.decoders.school.repository.ClassRepo;
-import com.decoders.school.repository.StatusRepo;
+import com.decoders.school.repository.*;
 import com.decoders.school.service.ClassService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,12 @@ public class ClassServiceImpl implements ClassService {
     @Autowired
     private AcademicYearRepo academicYearRepo;
 
+    @Autowired
+    private SectionRepo sectionRepo;
+
+    @Autowired
+    private StudentRepo studentRepo;
+
 
     @Override
     public List<Class> findAll() {
@@ -42,33 +49,38 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public List<Class> findAll(Class clasS) {
-        List<Class> classList = classRepo.findAll(new Specification<Class>() {
+    public Page<Class> findAll(Class clasS, Integer page, Integer size) {
+        if (page == null) page = 0;
+        if (size == null) size = 10;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+
+        Page<Class> classPage = classRepo.findAll(new Specification<Class>() {
 
             @Override
             public Predicate toPredicate(Root<Class> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 
                 List<Predicate> predicates = new ArrayList<>();
 
-                if(clasS.getId() != null){
-                    predicates.add(cb.equal(root.get("id"), clasS.getId() ));
+                if (clasS.getId() != null) {
+                    predicates.add(cb.equal(root.get("id"), clasS.getId()));
                 }
 
-                if(clasS.getName() != null){
+                if (clasS.getName() != null) {
                     predicates.add(cb.like(cb.lower(root.get("name")), "%" + clasS.getName().toLowerCase() + "%"));
                 }
 
-                if(clasS.getAcademicYear() != null){
-                    predicates.add(cb.equal(root.get("academicYear"), clasS.getAcademicYear() ));
+                if (clasS.getAcademicYear() != null) {
+                    predicates.add(cb.equal(root.get("academicYear"), clasS.getAcademicYear()));
                 }
 
-                predicates.add(cb.notEqual(root.get("status"), statusRepo.findStatusByCode("DELETED") ));
+                predicates.add(cb.notEqual(root.get("status"), statusRepo.findStatusByCode("DELETED")));
 
                 return cb.and(predicates.toArray(new Predicate[0]));
             }
-        });
+        }, pageable);
 
-        return classList;
+        return classPage;
     }
 
     @Override
@@ -135,6 +147,20 @@ public class ClassServiceImpl implements ClassService {
         }
 
         currentClass.setStatus(statusRepo.findStatusByCode("DELETED"));
+
+        List<Section> sectionList = sectionRepo.findAll(currentClass);
+
+        for (Section section : sectionList) {
+
+            section.setStatus(statusRepo.findStatusByCode("DELETED"));
+
+            List<Student> studentList = studentRepo.findStudentBySection(section);
+
+            for (Student student : studentList) {
+                student.setStatus(statusRepo.findStatusByCode("DELETED"));
+            }
+        }
+
         return currentClass;
     }
 

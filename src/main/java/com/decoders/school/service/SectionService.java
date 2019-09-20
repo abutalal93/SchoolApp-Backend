@@ -4,13 +4,14 @@ import com.decoders.school.entities.AcademicYear;
 import com.decoders.school.entities.Class;
 import com.decoders.school.entities.Section;
 import com.decoders.school.entities.Status;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface SectionService {
     public List<Section> findAll();
 
-    public List<Section> findAll(Section section);
+    public Page<Section> findAll(Section section, Integer page , Integer size);
 
     public List<Section> findAll(Class clasS);
 

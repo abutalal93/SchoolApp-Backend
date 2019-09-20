@@ -11,6 +11,10 @@ import com.decoders.school.repository.StatusRepo;
 import com.decoders.school.service.AcademicYearService;
 import com.decoders.school.service.OtpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +34,15 @@ public class AcademicYearServiceImpl implements AcademicYearService {
 
 
     @Override
-    public List<AcademicYear> findAll() {
-        return academicYearRepo.findAll();
+    public Page<AcademicYear> findAll(Integer page , Integer size) {
+        if (page == null) page = 0;
+        if (size == null) size = 10;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+
+        Page<AcademicYear> academicYearPage = academicYearRepo.findAll(pageable);
+
+        return academicYearPage;
     }
 
     @Override

@@ -4,11 +4,14 @@ import com.decoders.school.config.MessageBody;
 import com.decoders.school.entities.Class;
 import com.decoders.school.entities.Section;
 import com.decoders.school.exception.ResourceException;
+import com.decoders.school.resource.AcademicYearResource;
+import com.decoders.school.resource.PageResource;
 import com.decoders.school.resource.SectionResource;
 import com.decoders.school.service.AcademicYearService;
 import com.decoders.school.service.ClassService;
 import com.decoders.school.service.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,20 +39,22 @@ public class SectionController {
                                                       @RequestParam(name = "id", required = false) Long id,
                                                       @RequestParam(name = "name", required = false) String sectionName,
                                                       @RequestParam(name = "classId", required = false) Long classId,
-                                                      @RequestParam(name = "academicYearId", required = false) Long academicYearId) {
+                                                      @RequestParam(name = "academicYearId", required = false) Long academicYearId,
+                                                      @RequestParam(value = "page", required = false) Integer page,
+                                                      @RequestParam(value = "size", required = false) Integer size) {
 
         Section sectionSearchCriteria = new Section();
         sectionSearchCriteria.setId(id);
         sectionSearchCriteria.setName(sectionName);
         sectionSearchCriteria.setClasS(classId == null || classId == 0 ? null : classService.findClassById(classId));
         sectionSearchCriteria.setAcademicYear(academicYearId == null || academicYearId == 0 ? null : academicYearService.findAcademicYearById(academicYearId));
-        List<Section> sectionList = sectionService.findAll(sectionSearchCriteria);
+        Page<Section> sectionPage = sectionService.findAll(sectionSearchCriteria,page,size);
 
         MessageBody messageBody = MessageBody.getInstance();
 
         messageBody.setStatus("200");
         messageBody.setText("OK");
-        messageBody.setBody(SectionResource.toResource(sectionList));
+        messageBody.setBody(new PageResource(sectionPage.getTotalElements(), sectionPage.getTotalPages(), SectionResource.toResource(sectionPage.getContent())));
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }

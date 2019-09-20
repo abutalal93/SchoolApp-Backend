@@ -5,11 +5,14 @@ import com.decoders.school.entities.AcademicYear;
 import com.decoders.school.entities.Class;
 import com.decoders.school.exception.ResourceException;
 import com.decoders.school.resource.AcademicYearResource;
+import com.decoders.school.resource.AnnouncementResource;
 import com.decoders.school.resource.ClassResource;
+import com.decoders.school.resource.PageResource;
 import com.decoders.school.service.AcademicYearService;
 import com.decoders.school.service.ClassService;
 import com.decoders.school.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,16 +32,18 @@ public class AcademicYearController {
     private StatusService statusService;
 
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ResponseEntity<MessageBody> findAllAcademicYear(HttpServletRequest request) {
+    public ResponseEntity<MessageBody> findAllAcademicYear(HttpServletRequest request,
+                                                           @RequestParam(value = "page", required = false) Integer page,
+                                                           @RequestParam(value = "size", required = false) Integer size) {
 
 
-        List<AcademicYear> academicYearList = academicYearService.findAll();
+        Page<AcademicYear> academicYearPage = academicYearService.findAll(page , size);
 
         MessageBody messageBody = MessageBody.getInstance();
 
         messageBody.setStatus("200");
         messageBody.setText("OK");
-        messageBody.setBody(AcademicYearResource.toResource(academicYearList));
+        messageBody.setBody(new PageResource(academicYearPage.getTotalElements(), academicYearPage.getTotalPages(), AcademicYearResource.toResource(academicYearPage.getContent())));
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }

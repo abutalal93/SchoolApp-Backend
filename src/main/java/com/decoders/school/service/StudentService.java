@@ -2,13 +2,14 @@ package com.decoders.school.service;
 
 import com.decoders.school.entities.Status;
 import com.decoders.school.entities.Student;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface StudentService {
     public List<Student> findAll();
 
-    public List<Student> findAll(Student student);
+    public Page<Student> findAll(Student student, Integer page, Integer size);
 
 
     public Student save(Student student);

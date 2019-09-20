@@ -5,12 +5,15 @@ import com.decoders.school.config.MessageBody;
 import com.decoders.school.entities.Section;
 import com.decoders.school.entities.Student;
 import com.decoders.school.exception.ResourceException;
+import com.decoders.school.resource.PageResource;
+import com.decoders.school.resource.SectionResource;
 import com.decoders.school.resource.StudentResource;
 import com.decoders.school.service.AcademicYearService;
 import com.decoders.school.service.ClassService;
 import com.decoders.school.service.SectionService;
 import com.decoders.school.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +45,9 @@ public class StudentController {
                                                       @RequestParam(name = "name", required = false) String studentName,
                                                       @RequestParam(name = "sectionId", required = false) Long sectionId,
                                                       @RequestParam(name = "classId", required = false) Long classId,
-                                                      @RequestParam(name = "academicYearId", required = false) Long academicYearId) {
+                                                      @RequestParam(name = "academicYearId", required = false) Long academicYearId,
+                                                      @RequestParam(value = "page", required = false) Integer page,
+                                                      @RequestParam(value = "size", required = false) Integer size) {
 
         Student studentSearchCriteria = new Student();
         studentSearchCriteria.setId(id);
@@ -50,13 +55,13 @@ public class StudentController {
         studentSearchCriteria.setSection(sectionId == null || sectionId == 0 ? ((classId == null || classId == 0) ? (null) : (new Section(classService.findClassById(classId)))) : sectionService.findSectionById(sectionId));
         studentSearchCriteria.setAcademicYear(academicYearId == null || academicYearId == 0 ? null : academicYearService.findAcademicYearById(academicYearId));
 
-        List<Student> studentList = studentService.findAll(studentSearchCriteria);
+        Page<Student> studentPage = studentService.findAll(studentSearchCriteria, page, size);
 
         MessageBody messageBody = MessageBody.getInstance();
 
         messageBody.setStatus("200");
         messageBody.setText("OK");
-        messageBody.setBody(StudentResource.toResource(studentList));
+        messageBody.setBody(new PageResource(studentPage.getTotalElements(), studentPage.getTotalPages(), StudentResource.toResource(studentPage.getContent())));
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
@@ -95,7 +100,7 @@ public class StudentController {
 
         Student student = studentResource.toStudent();
 
-        if(studentResource.getFatherMobile() != null){
+        if (studentResource.getFatherMobile() != null) {
             String validMobileFather = Utils.standardPhoneFormat("+962", studentResource.getFatherMobile());
 
             if (validMobileFather == null) {
@@ -104,7 +109,7 @@ public class StudentController {
             student.setFatherMobile(validMobileFather);
         }
 
-        if(studentResource.getMotherMobile() != null){
+        if (studentResource.getMotherMobile() != null) {
             String validMobileMother = Utils.standardPhoneFormat("+962", studentResource.getMotherMobile());
 
             if (validMobileMother == null) {
@@ -141,7 +146,7 @@ public class StudentController {
 
         Student student = studentResource.toStudent();
 
-        if(studentResource.getFatherMobile() != null){
+        if (studentResource.getFatherMobile() != null) {
             String validMobileFather = Utils.standardPhoneFormat("+962", studentResource.getFatherMobile());
 
             if (validMobileFather == null) {
@@ -150,7 +155,7 @@ public class StudentController {
             student.setFatherMobile(validMobileFather);
         }
 
-        if(studentResource.getMotherMobile() != null){
+        if (studentResource.getMotherMobile() != null) {
             String validMobileMother = Utils.standardPhoneFormat("+962", studentResource.getMotherMobile());
 
             if (validMobileMother == null) {

@@ -6,6 +6,7 @@ import com.decoders.school.entities.AnnouncementType;
 import com.decoders.school.entities.School;
 import com.decoders.school.entities.Status;
 import com.decoders.school.resource.AnnouncementResource;
+import com.decoders.school.resource.PageResource;
 import com.decoders.school.resource.SchoolResource;
 import com.decoders.school.service.AnnouncementService;
 import com.decoders.school.service.AnnouncementTypeService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @CrossOrigin
@@ -51,17 +53,26 @@ public class PublicController {
     }
 
     @RequestMapping(value = "/announcement", method = RequestMethod.GET)
-    public ResponseEntity<MessageBody> findPublicAnnoucment(HttpServletRequest request) {
+    public ResponseEntity<MessageBody> findPublicAnnoucment(HttpServletRequest request,
+                                                            @RequestParam(value = "page", required = false) Integer page,
+                                                            @RequestParam(value = "size", required = false) Integer size) {
 
         AnnouncementType announcementType = announcementTypeService.findAnnouncementTypeByCode("PUBLIC");
 
-        Page<Announcement> announcementList = announcementService.findAnnouncement(announcementType, statusService.findStatusByCode("ACTIVE"),null,null);
+        Status status = statusService.findStatusByCode("ACTIVE");
+
+        Announcement announcementSearchCriteria = new Announcement();
+        announcementSearchCriteria.setAnnouncementType(announcementType);
+        announcementSearchCriteria.setExpireDate(LocalDateTime.now());
+        announcementSearchCriteria.setStatus(status);
+
+        Page<Announcement> announcementList = announcementService.findAll(announcementSearchCriteria, page, size);
 
         MessageBody messageBody = MessageBody.getInstance();
 
         messageBody.setStatus("200");
         messageBody.setText("OK");
-        messageBody.setBody(AnnouncementResource.toResource(announcementList.getContent()));
+        messageBody.setBody(new PageResource(announcementList.getTotalElements(), announcementList.getTotalPages(), AnnouncementResource.toResource(announcementList.getContent())));
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
 }

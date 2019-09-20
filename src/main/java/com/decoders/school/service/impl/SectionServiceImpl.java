@@ -1,16 +1,15 @@
 package com.decoders.school.service.impl;
 
-import com.decoders.school.entities.AcademicYear;
+import com.decoders.school.entities.*;
 import com.decoders.school.entities.Class;
-import com.decoders.school.entities.Section;
-import com.decoders.school.entities.Status;
 import com.decoders.school.exception.ResourceException;
-import com.decoders.school.repository.AcademicYearRepo;
-import com.decoders.school.repository.ClassRepo;
-import com.decoders.school.repository.SectionRepo;
-import com.decoders.school.repository.StatusRepo;
+import com.decoders.school.repository.*;
 import com.decoders.school.service.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,6 +39,9 @@ public class SectionServiceImpl implements SectionService {
     @Autowired
     private ClassRepo classRepo;
 
+    @Autowired
+    private StudentRepo studentRepo;
+
 
     @Override
     public List<Section> findAll() {
@@ -47,8 +49,14 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public List<Section> findAll(Section section) {
-        List<Section> sectionList = sectionRepo.findAll(new Specification<Section>() {
+    public Page<Section> findAll(Section section,Integer page , Integer size) {
+
+        if (page == null) page = 0;
+        if (size == null) size = 10;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+
+        Page<Section> sectionPage = sectionRepo.findAll(new Specification<Section>() {
 
             @Override
             public Predicate toPredicate(Root<Section> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -75,9 +83,9 @@ public class SectionServiceImpl implements SectionService {
 
                 return cb.and(predicates.toArray(new Predicate[0]));
             }
-        });
+        },pageable);
 
-        return sectionList;
+        return sectionPage;
     }
 
     @Override
@@ -157,10 +165,17 @@ public class SectionServiceImpl implements SectionService {
 
         Section currentSection = sectionRepo.findSectionById(section.getId());
         if (currentSection == null) {
-            throw new ResourceException(HttpStatus.NOT_FOUND, "class_not_found");
+            throw new ResourceException(HttpStatus.NOT_FOUND, "section_not_found");
         }
 
         currentSection.setStatus(statusRepo.findStatusByCode("DELETED"));
+
+        List<Student> studentList = studentRepo.findStudentBySection(section);
+
+        for (Student student : studentList) {
+            student.setStatus(statusRepo.findStatusByCode("DELETED"));
+        }
+
         return currentSection;
     }
 

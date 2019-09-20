@@ -13,6 +13,10 @@ import com.decoders.school.repository.StudentRepo;
 import com.decoders.school.service.StatusService;
 import com.decoders.school.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -48,8 +52,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> findAll(Student student) {
-        List<Student> studentList = studentRepo.findAll(new Specification<Student>() {
+    public Page<Student> findAll(Student student, Integer page , Integer size) {
+
+        if (page == null) page = 0;
+        if (size == null) size = 10;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+
+        Page<Student> studentPage = studentRepo.findAll(new Specification<Student>() {
 
             @Override
             public Predicate toPredicate(Root<Student> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -80,9 +90,9 @@ public class StudentServiceImpl implements StudentService {
 
                 return cb.and(predicates.toArray(new Predicate[0]));
             }
-        });
+        },pageable);
 
-        return studentList;
+        return studentPage;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.decoders.school.repository;
 
 import com.decoders.school.entities.AcademicYear;
+import com.decoders.school.entities.Section;
 import com.decoders.school.entities.Student;
 import com.decoders.school.entities.Status;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -17,6 +18,8 @@ public interface StudentRepo extends CrudRepository<Student, Long> , JpaSpecific
     public Student save(Student student);
 
     public Student findStudentById(Long id);
+
+    public List<Student> findStudentBySection(Section section);
 
     public Student findStudentByNationalNumberAndAcademicYearAndStatusNot(String nationalNumber , AcademicYear academicYear, Status status);
 

@@ -49,7 +49,7 @@ public class AnnouncementController {
     private Environment environment;
 
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/public/create", method = RequestMethod.POST)
     public ResponseEntity<MessageBody> createAnnouncement(HttpServletRequest request, @RequestBody AnnouncementResource announcementResource) {
 
         if (announcementResource.getTitle() == null
@@ -94,6 +94,26 @@ public class AnnouncementController {
         messageBody.setStatus("200");
         messageBody.setText("OK");
         messageBody.setBody(announcementResource);
+
+        return new ResponseEntity<>(messageBody, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/public/delete", method = RequestMethod.DELETE)
+    public ResponseEntity<MessageBody> deleteClass(HttpServletRequest request, @RequestBody AnnouncementResource announcementResource) {
+
+        if (announcementResource.getId() == null) {
+            throw new ResourceException(HttpStatus.BAD_REQUEST, "invalid_request");
+        }
+
+        Announcement announcement = announcementResource.toAnnouncement();
+
+        announcementService.delete(announcement);
+
+        MessageBody messageBody = MessageBody.getInstance();
+
+        messageBody.setStatus("200");
+        messageBody.setText("OK");
+        messageBody.setBody(null);
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }

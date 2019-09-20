@@ -3,9 +3,12 @@ package com.decoders.school.controller;
 import com.decoders.school.config.MessageBody;
 import com.decoders.school.entities.Class;
 import com.decoders.school.exception.ResourceException;
+import com.decoders.school.resource.AnnouncementResource;
 import com.decoders.school.resource.ClassResource;
+import com.decoders.school.resource.PageResource;
 import com.decoders.school.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,20 +33,22 @@ public class ClassController {
     public ResponseEntity<MessageBody> findAllClass(HttpServletRequest request,
                                                     @RequestParam(name = "id", required = false) Long classId,
                                                     @RequestParam(name = "name", required = false) String className,
-                                                    @RequestParam(name = "academicYearId", required = false) Long academicYearId) {
+                                                    @RequestParam(name = "academicYearId", required = false) Long academicYearId,
+                                                    @RequestParam(value = "page", required = false) Integer page,
+                                                    @RequestParam(value = "size", required = false) Integer size) {
 
 
         Class classSearchCriteria = new Class();
         classSearchCriteria.setId(classId);
         classSearchCriteria.setName(className);
         classSearchCriteria.setAcademicYear(academicYearId == null || academicYearId == 0 ? null : academicYearService.findAcademicYearById(academicYearId));
-        List<Class> classList = classService.findAll(classSearchCriteria);
+        Page<Class> classPage = classService.findAll(classSearchCriteria, page , size);
 
         MessageBody messageBody = MessageBody.getInstance();
 
         messageBody.setStatus("200");
         messageBody.setText("OK");
-        messageBody.setBody(ClassResource.toResource(classList));
+        messageBody.setBody(new PageResource(classPage.getTotalElements(), classPage.getTotalPages(), ClassResource.toResource(classPage.getContent())));
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
