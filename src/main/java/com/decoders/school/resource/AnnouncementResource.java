@@ -152,6 +152,7 @@ public class AnnouncementResource {
     public Announcement toAnnouncement(){
         Announcement announcement = new Announcement();
 
+        announcement.setId(this.id);
         announcement.setCreateDate(this.createDate);
         announcement.setExpireDate(this.expireDate);
         announcement.setText(this.text);

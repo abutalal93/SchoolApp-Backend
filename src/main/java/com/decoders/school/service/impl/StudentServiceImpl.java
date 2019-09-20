@@ -1,5 +1,6 @@
 package com.decoders.school.service.impl;
 
+import com.decoders.school.Utils.Utils;
 import com.decoders.school.entities.AcademicYear;
 import com.decoders.school.entities.Class;
 import com.decoders.school.entities.Section;
@@ -118,7 +119,7 @@ public class StudentServiceImpl implements StudentService {
 
         student.setAcademicYear(currentAcademicYear);
         student.setStatus(statusRepo.findStatusByCode("ACTIVE"));
-        student.setCreateDate(LocalDateTime.now());
+        student.setCreateDate(Utils.getCurrentDateTimeJordan());
         student.setSection(student.getSection());
         return studentRepo.save(student);
     }

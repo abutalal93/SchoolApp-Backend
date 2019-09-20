@@ -1,5 +1,6 @@
 package com.decoders.school.controller;
 
+import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
 import com.decoders.school.entities.Announcement;
 import com.decoders.school.entities.AnnouncementType;
@@ -63,7 +64,7 @@ public class PublicController {
 
         Announcement announcementSearchCriteria = new Announcement();
         announcementSearchCriteria.setAnnouncementType(announcementType);
-        announcementSearchCriteria.setExpireDate(LocalDateTime.now());
+        announcementSearchCriteria.setExpireDate(Utils.getCurrentDateTimeJordan());
         announcementSearchCriteria.setStatus(status);
 
         Page<Announcement> announcementList = announcementService.findAll(announcementSearchCriteria, page, size);

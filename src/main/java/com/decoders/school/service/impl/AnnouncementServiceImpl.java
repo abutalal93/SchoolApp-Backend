@@ -4,10 +4,7 @@ import com.decoders.school.Utils.Utils;
 import com.decoders.school.entities.*;
 import com.decoders.school.entities.Class;
 import com.decoders.school.exception.ResourceException;
-import com.decoders.school.repository.AnnouncementRepo;
-import com.decoders.school.repository.AnnouncementTypeRepo;
-import com.decoders.school.repository.SchoolRepo;
-import com.decoders.school.repository.StatusRepo;
+import com.decoders.school.repository.*;
 import com.decoders.school.resource.AnnouncementImageResource;
 import com.decoders.school.service.AnnouncementService;
 import com.decoders.school.service.SchoolService;
@@ -45,6 +42,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private AnnouncementImageRepo announcementImageRepo;
 
 
     @Override
@@ -110,7 +110,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         announcement.setAnnouncementType(announcementType);
         announcement.setStatus(activeStatus);
-        announcement.setCreateDate(LocalDateTime.now());
+        announcement.setCreateDate(Utils.getCurrentDateTimeJordan());
 
         return announcementRepo.save(announcement);
     }
@@ -124,6 +124,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
 
         currentAnnouncement.setStatus(statusRepo.findStatusByCode("DELETED"));
+
+        for (AnnouncementImage announcementImage: currentAnnouncement.getAnnouncementImageList()){
+            announcementImageRepo.delete(announcementImage);
+        }
 
         return currentAnnouncement;
     }

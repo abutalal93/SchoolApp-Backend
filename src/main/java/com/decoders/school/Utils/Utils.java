@@ -11,9 +11,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
+import java.util.TimeZone;
 
 public class Utils {
 
@@ -131,5 +133,15 @@ public class Utils {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    public static LocalDateTime getCurrentDateTimeJordan(){
+        LocalDateTime localDateTime = LocalDateTime.now(TimeZone.getTimeZone("Asia/Amman").toZoneId());
+        return localDateTime;
+    }
+
+    public static LocalDate getCurrentDateJordan(){
+        LocalDate localDate = LocalDate.now(TimeZone.getTimeZone("Asia/Amman").toZoneId());
+        return localDate;
     }
 }

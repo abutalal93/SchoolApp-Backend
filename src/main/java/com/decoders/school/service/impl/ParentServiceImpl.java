@@ -1,5 +1,6 @@
 package com.decoders.school.service.impl;
 
+import com.decoders.school.Utils.Utils;
 import com.decoders.school.entities.Parent;
 import com.decoders.school.entities.Status;
 import com.decoders.school.repository.ParentRepo;
@@ -48,7 +49,7 @@ public class ParentServiceImpl implements ParentService {
             parent.setToken(token);
             parent.setPlatform(platform);
             parent.setStatus(activeStatus);
-            parent.setCreateDate(LocalDateTime.now());
+            parent.setCreateDate(Utils.getCurrentDateTimeJordan());
             return parentRepo.save(parent);
         }
     }

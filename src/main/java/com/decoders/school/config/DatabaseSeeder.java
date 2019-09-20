@@ -1,5 +1,6 @@
 package com.decoders.school.config;
 
+import com.decoders.school.Utils.Utils;
 import com.decoders.school.entities.*;
 import com.decoders.school.entities.Class;
 import com.decoders.school.repository.*;
@@ -81,8 +82,8 @@ public class DatabaseSeeder {
                 "\n" +
                 "الدكتور عبدالله حسين الدباس");
 
-        abdallahSchool.setCreateDate(LocalDateTime.now());
-        abdallahSchool.setExpireDate(LocalDateTime.now().plusYears(1));
+        abdallahSchool.setCreateDate(Utils.getCurrentDateTimeJordan());
+        abdallahSchool.setExpireDate(Utils.getCurrentDateTimeJordan().plusYears(1));
         abdallahSchool.setEmail("dabbas@hotmail.com");
         abdallahSchool.setFacebookUrl("https://www.facebook.com/abdallah.dabbas.1");
         abdallahSchool.setImage("http://www.omareyah.com/sites/all/themes/omaryah01/images/logonew.png");
@@ -142,8 +143,8 @@ public class DatabaseSeeder {
 
         AcademicYear academicYear = new AcademicYear();
         academicYear.setStatus(activeStatus);
-        academicYear.setStartDate(LocalDateTime.now());
-        academicYear.setEndDate(LocalDateTime.now().plusYears(1));
+        academicYear.setStartDate(Utils.getCurrentDateTimeJordan());
+        academicYear.setEndDate(Utils.getCurrentDateTimeJordan().plusYears(1));
         academicYear.setAlias(academicYear.getStartDate().getYear() + "-" + academicYear.getEndDate().getYear());
 
         academicYearRepo.save(academicYear);
@@ -152,7 +153,7 @@ public class DatabaseSeeder {
     private void seedClass() {
         Status activeStatus = statusRepo.findStatusByCode("ACTIVE");
 
-        AcademicYear academicYear = academicYearRepo.findAcademicYear(LocalDateTime.now());
+        AcademicYear academicYear = academicYearRepo.findAcademicYear(Utils.getCurrentDateTimeJordan());
 
         com.decoders.school.entities.Class firstClass = new com.decoders.school.entities.Class();
 
@@ -174,7 +175,7 @@ public class DatabaseSeeder {
     private void seedSection() {
         Status activeStatus = statusRepo.findStatusByCode("ACTIVE");
 
-        AcademicYear academicYear = academicYearRepo.findAcademicYear(LocalDateTime.now());
+        AcademicYear academicYear = academicYearRepo.findAcademicYear(Utils.getCurrentDateTimeJordan());
 
         Class clasS1 = classRepo.findClassByNameAndAcademicYearAndStatus("الصف الأول", academicYear, activeStatus);
 
@@ -216,7 +217,7 @@ public class DatabaseSeeder {
     private void seedStudent() {
         Status activeStatus = statusRepo.findStatusByCode("ACTIVE");
 
-        AcademicYear academicYear = academicYearRepo.findAcademicYear(LocalDateTime.now());
+        AcademicYear academicYear = academicYearRepo.findAcademicYear(Utils.getCurrentDateTimeJordan());
 
         Class clasS1 = classRepo.findClassByNameAndAcademicYearAndStatus("الصف الأول", academicYear, activeStatus);
 
@@ -224,7 +225,7 @@ public class DatabaseSeeder {
 
         Student studenta = new Student();
         studenta.setName("Abdallah Dabbas");
-        studenta.setCreateDate(LocalDateTime.now());
+        studenta.setCreateDate(Utils.getCurrentDateTimeJordan());
         studenta.setFatherMobile("+962786789496");
         studenta.setMotherMobile("+962786789496");
         studenta.setGender("M");
@@ -236,7 +237,7 @@ public class DatabaseSeeder {
 
         Student studentb = new Student();
         studentb.setName("Wessam Rimawi");
-        studentb.setCreateDate(LocalDateTime.now());
+        studentb.setCreateDate(Utils.getCurrentDateTimeJordan());
         studentb.setFatherMobile("+962796983230");
         studentb.setMotherMobile("+962796983230");
         studentb.setGender("M");

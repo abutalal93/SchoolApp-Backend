@@ -44,14 +44,14 @@ public class OtpServiceImpl implements OtpService {
             currentOtp.setStatus(statusRepo.findStatusByCode("INACTIVE"));
             otp.setStatus(activeStatus);
             otp.setCode(Utils.randomNumber(4));
-            otp.setCreateDate(LocalDateTime.now());
-            otp.setExpireDate(LocalDateTime.now().plusMinutes(1));
+            otp.setCreateDate(Utils.getCurrentDateTimeJordan());
+            otp.setExpireDate(Utils.getCurrentDateTimeJordan().plusMinutes(1));
             return otpRepo.save(otp);
         }else{
             otp.setStatus(activeStatus);
             otp.setCode(Utils.randomNumber(4));
-            otp.setCreateDate(LocalDateTime.now());
-            otp.setExpireDate(LocalDateTime.now().plusMinutes(1));
+            otp.setCreateDate(Utils.getCurrentDateTimeJordan());
+            otp.setExpireDate(Utils.getCurrentDateTimeJordan().plusMinutes(1));
             return otpRepo.save(otp);
         }
     }

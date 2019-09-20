@@ -128,7 +128,7 @@ public class AuthController {
             throw new ResourceException(HttpStatus.BAD_REQUEST, "otp_invalid");
         }
 
-        if (otp.getExpireDate().isBefore(LocalDateTime.now())) {
+        if (otp.getExpireDate().isBefore(Utils.getCurrentDateTimeJordan())) {
             otpService.updateOtp(validMobile, statusService.findStatusByCode("INACTIVE"));
             throw new ResourceException(HttpStatus.BAD_REQUEST, "otp_invalid");
         }
