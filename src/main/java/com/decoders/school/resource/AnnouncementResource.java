@@ -1,10 +1,7 @@
 package com.decoders.school.resource;
 
 
-import com.decoders.school.entities.Announcement;
-import com.decoders.school.entities.AnnouncementImage;
-import com.decoders.school.entities.AnnouncementType;
-import com.decoders.school.entities.Status;
+import com.decoders.school.entities.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +20,8 @@ public class AnnouncementResource {
     private LocalDateTime expireDate;
 
     private List<AnnouncementImageResource> imageList;
+
+    private List<StudentResource> studentList;
 
     private Long statusId;
 
@@ -110,6 +109,14 @@ public class AnnouncementResource {
 
     public void setAnnouncementTypeCode(String announcementTypeCode) {
         this.announcementTypeCode = announcementTypeCode;
+    }
+
+    public List<StudentResource> getStudentList() {
+        return studentList;
+    }
+
+    public void setStudentList(List<StudentResource> studentList) {
+        this.studentList = studentList;
     }
 
     public static AnnouncementResource toResource(Announcement annoucment)

@@ -2,13 +2,12 @@ package com.decoders.school.controller;
 
 import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
-import com.decoders.school.entities.Announcement;
-import com.decoders.school.entities.AnnouncementImage;
-import com.decoders.school.entities.AnnouncementType;
-import com.decoders.school.entities.School;
+import com.decoders.school.entities.*;
 import com.decoders.school.exception.ResourceException;
+import com.decoders.school.resource.AnnouncementImageResource;
 import com.decoders.school.resource.AnnouncementResource;
 import com.decoders.school.resource.PageResource;
+import com.decoders.school.resource.StudentResource;
 import com.decoders.school.security.JwtTokenProvider;
 import com.decoders.school.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +47,14 @@ public class AnnouncementController {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private StudentService studentService;
 
-    @RequestMapping(value = "/public/create", method = RequestMethod.POST)
+    @Autowired
+    private StudentAnnouncementService studentAnnouncementService;
+
+
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<MessageBody> createAnnouncement(HttpServletRequest request, @RequestBody AnnouncementResource announcementResource) {
 
         if (announcementResource.getTitle() == null
@@ -73,32 +78,104 @@ public class AnnouncementController {
             throw new ResourceException(HttpStatus.UNAUTHORIZED, "invalid_token");
         }
 
-        Announcement announcement = announcementService.save(announcementResource.toAnnouncement());
+        Announcement announcement = announcementResource.toAnnouncement();
 
-        List<AnnouncementImage> announcementImageList = new ArrayList<>(announcementResource.getImageList().size());
+        List<Student> studentList = null;
 
-        announcementResource.getImageList().forEach(announcementImageResource -> {
-            announcementImageResource.setUrl(Utils.archiveFile(environment.getProperty("attachment_url"), environment.getProperty("attachment_path"), announcementImageResource.getUrl()));
-            AnnouncementImage announcementImage = announcementImageResource.toAnnouncementImage();
-            announcementImage.setAnnouncement(announcement);
-            announcementImage = announcementImageService.save(announcementImage);
-            announcementImageList.add(announcementImage);
-        });
+        switch (announcementResource.getAnnouncementTypeCode()) {
+            case "PUBLIC":
+                announcement = announcementService.save(announcementResource.toAnnouncement());
 
-        announcement.setAnnouncementImageList(announcementImageList);
+                List<AnnouncementImage> announcementImageList = new ArrayList<>(announcementResource.getImageList().size());
 
-        announcementResource = AnnouncementResource.toResource(announcement);
+                for (AnnouncementImageResource announcementImageResource : announcementResource.getImageList()) {
+                    announcementImageResource.setUrl(Utils.archiveFile(environment.getProperty("attachment_url"), environment.getProperty("attachment_path"), announcementImageResource.getUrl()));
+                    AnnouncementImage announcementImage = announcementImageResource.toAnnouncementImage();
+                    announcementImage.setAnnouncement(announcement);
+                    announcementImage = announcementImageService.save(announcementImage);
+                    announcementImageList.add(announcementImage);
+                }
+
+                announcement.setAnnouncementImageList(announcementImageList);
+                break;
+            case "PRIVATE":
+                if (announcementResource.getStudentList() == null
+                        || announcementResource.getStudentList().isEmpty()) {
+                    throw new ResourceException(HttpStatus.BAD_REQUEST, "request_null");
+                }
+
+                announcement = announcementService.save(announcementResource.toAnnouncement());
+
+                announcementImageList = new ArrayList<>(announcementResource.getImageList().size());
+
+                for (AnnouncementImageResource announcementImageResource : announcementResource.getImageList()) {
+                    announcementImageResource.setUrl(Utils.archiveFile(environment.getProperty("attachment_url"), environment.getProperty("attachment_path"), announcementImageResource.getUrl()));
+                    AnnouncementImage announcementImage = announcementImageResource.toAnnouncementImage();
+                    announcementImage.setAnnouncement(announcement);
+                    announcementImage = announcementImageService.save(announcementImage);
+                    announcementImageList.add(announcementImage);
+                }
+
+                announcement.setAnnouncementImageList(announcementImageList);
+
+                studentList = new ArrayList<>(announcementResource.getStudentList().size());
+
+                for (StudentResource studentResource : announcementResource.getStudentList()) {
+                    Student student = studentService.findStudentById(studentResource.getId());
+                    studentList.add(student);
+
+                    StudentAnnouncement studentAnnouncement = new StudentAnnouncement();
+                    studentAnnouncement.setAnnouncement(announcement);
+                    studentAnnouncement.setStudent(student);
+                    studentAnnouncement = studentAnnouncementService.createStudentAnnoucment(studentAnnouncement);
+                }
+
+                break;
+            case "HOMEWORK":
+                if (announcementResource.getStudentList() == null
+                        || announcementResource.getStudentList().isEmpty()) {
+                    throw new ResourceException(HttpStatus.BAD_REQUEST, "request_null");
+                }
+
+                announcement = announcementService.save(announcementResource.toAnnouncement());
+
+                announcementImageList = new ArrayList<>(announcementResource.getImageList().size());
+
+                for (AnnouncementImageResource announcementImageResource : announcementResource.getImageList()) {
+                    announcementImageResource.setUrl(Utils.archiveFile(environment.getProperty("attachment_url"), environment.getProperty("attachment_path"), announcementImageResource.getUrl()));
+                    AnnouncementImage announcementImage = announcementImageResource.toAnnouncementImage();
+                    announcementImage.setAnnouncement(announcement);
+                    announcementImage = announcementImageService.save(announcementImage);
+                    announcementImageList.add(announcementImage);
+                }
+
+                announcement.setAnnouncementImageList(announcementImageList);
+
+                studentList = new ArrayList<>(announcementResource.getStudentList().size());
+
+                for (StudentResource studentResource : announcementResource.getStudentList()) {
+                    Student student = studentService.findStudentById(studentResource.getId());
+                    studentList.add(student);
+
+                    StudentAnnouncement studentAnnouncement = new StudentAnnouncement();
+                    studentAnnouncement.setAnnouncement(announcement);
+                    studentAnnouncement.setStudent(student);
+                    studentAnnouncement = studentAnnouncementService.createStudentAnnoucment(studentAnnouncement);
+                }
+                break;
+            default:
+                throw new ResourceException(HttpStatus.BAD_REQUEST, "request_null");
+        }
 
         MessageBody messageBody = MessageBody.getInstance();
-
         messageBody.setStatus("200");
         messageBody.setText("OK");
-        messageBody.setBody(announcementResource);
+        messageBody.setBody(null);
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/public/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity<MessageBody> deleteClass(HttpServletRequest request, @RequestBody AnnouncementResource announcementResource) {
 
         if (announcementResource.getId() == null) {
@@ -118,14 +195,21 @@ public class AnnouncementController {
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/public/findAll", method = RequestMethod.GET)
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ResponseEntity<MessageBody> createAnnouncement(HttpServletRequest request,
+                                                          @RequestParam(value = "title", required = false) String title,
+                                                          @RequestParam(value = "type", required = false) String type,
                                                           @RequestParam(value = "page", required = false) Integer page,
                                                           @RequestParam(value = "size", required = false) Integer size) {
 
-        AnnouncementType announcementType = announcementTypeService.findAnnouncementTypeByCode("PUBLIC");
+        AnnouncementType announcementType = announcementTypeService.findAnnouncementTypeByCode(type);
 
-        Page<Announcement> announcementList = announcementService.findAnnouncement(announcementType, statusService.findStatusByCode("ACTIVE"), page, size);
+        Announcement announcement = new Announcement();
+        announcement.setTitle(title);
+        announcement.setAnnouncementType(announcementType);
+        announcement.setStatus(statusService.findStatusByCode("ACTIVE"));
+
+        Page<Announcement> announcementList = announcementService.findAll(announcement, page, size);
 
         MessageBody messageBody = MessageBody.getInstance();
 
