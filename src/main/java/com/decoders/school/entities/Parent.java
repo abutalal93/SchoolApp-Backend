@@ -37,6 +37,10 @@ public class Parent implements Serializable {
     @JoinColumn(name = "prt_sts_id", nullable = false)
     private Status status;
 
+    @OneToOne
+    @JoinColumn(name = "prt_mob_dev_id", nullable = false)
+    private MobileDevice mobileDevice;
+
     public Long getId() {
         return id;
     }
@@ -99,5 +103,13 @@ public class Parent implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public MobileDevice getMobileDevice() {
+        return mobileDevice;
+    }
+
+    public void setMobileDevice(MobileDevice mobileDevice) {
+        this.mobileDevice = mobileDevice;
     }
 }

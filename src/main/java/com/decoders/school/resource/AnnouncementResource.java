@@ -155,6 +155,14 @@ public class AnnouncementResource {
         return annoucmentResourceList;
     }
 
+    public static List<AnnouncementResource> toResourceStudentAnnouncement(List<StudentAnnouncement> studentAnnouncementList){
+        List<AnnouncementResource> annoucmentResourceList = new ArrayList<>();
+        studentAnnouncementList.forEach(studentAnnouncement -> {
+            AnnouncementResource annoucmentResource = toResource(studentAnnouncement.getAnnouncement());
+            annoucmentResourceList.add(annoucmentResource);
+        });
+        return annoucmentResourceList;
+    }
 
     public Announcement toAnnouncement(){
         Announcement announcement = new Announcement();

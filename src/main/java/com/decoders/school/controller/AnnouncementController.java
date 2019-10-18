@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -196,7 +197,7 @@ public class AnnouncementController {
     }
 
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ResponseEntity<MessageBody> createAnnouncement(HttpServletRequest request,
+    public ResponseEntity<MessageBody> findAll(HttpServletRequest request,
                                                           @RequestParam(value = "title", required = false) String title,
                                                           @RequestParam(value = "type", required = false) String type,
                                                           @RequestParam(value = "page", required = false) Integer page,
@@ -216,6 +217,43 @@ public class AnnouncementController {
         messageBody.setStatus("200");
         messageBody.setText("OK");
         messageBody.setBody(new PageResource(announcementList.getTotalElements(), announcementList.getTotalPages(), AnnouncementResource.toResource(announcementList.getContent())));
+
+        return new ResponseEntity<>(messageBody, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/findByStudent", method = RequestMethod.GET)
+    public ResponseEntity<MessageBody> findByStudent(HttpServletRequest request,
+                                                          @RequestParam(value = "studentId", required = false) Long studentId,
+                                                          @RequestParam(value = "type", required = false) String type,
+                                                          @RequestParam(value = "page", required = false) Integer page,
+                                                          @RequestParam(value = "size", required = false) Integer size) {
+
+        AnnouncementType announcementType = announcementTypeService.findAnnouncementTypeByCode(type);
+
+        Announcement announcement = new Announcement();
+        announcement.setAnnouncementType(announcementType);
+        announcement.setStatus(statusService.findStatusByCode("ACTIVE"));
+        announcement.setExpireDate(LocalDateTime.now());
+
+        Student student = studentService.findStudentById(studentId);
+
+        StudentAnnouncement studentAnnouncementSearchCriteria = new StudentAnnouncement();
+        studentAnnouncementSearchCriteria.setAnnouncement(announcement);
+        studentAnnouncementSearchCriteria.setStudent(student);
+
+        Page<StudentAnnouncement> studentAnnouncementPage = studentAnnouncementService.findAll(studentAnnouncementSearchCriteria, page, size);
+
+        PageResource pageResource = new PageResource();
+        pageResource.setCount(studentAnnouncementPage.getTotalElements());
+        pageResource.setNumberOfPages(studentAnnouncementPage.getTotalPages());
+        pageResource.setPageList(AnnouncementResource.toResourceStudentAnnouncement(studentAnnouncementPage.getContent()));
+
+        MessageBody messageBody = MessageBody.getInstance();
+
+        messageBody.setStatus("200");
+        messageBody.setText("OK");
+        messageBody.setBody(pageResource);
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }

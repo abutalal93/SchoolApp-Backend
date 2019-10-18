@@ -1,5 +1,6 @@
 package com.decoders.school;
 
+import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.DatabaseSeeder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

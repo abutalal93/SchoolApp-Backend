@@ -53,7 +53,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Page<Student> findAll(Student student, Integer page , Integer size) {
+    public Page<Student> findAll(Student student, Integer page, Integer size) {
 
         if (page == null) page = 0;
         if (size == null) size = 10;
@@ -67,31 +67,31 @@ public class StudentServiceImpl implements StudentService {
 
                 List<Predicate> predicates = new ArrayList<>();
 
-                if(student.getId() != null){
-                    predicates.add(cb.equal(root.get("id"), student.getId() ));
+                if (student.getId() != null) {
+                    predicates.add(cb.equal(root.get("id"), student.getId()));
                 }
 
-                if(student.getName() != null){
+                if (student.getName() != null) {
                     predicates.add(cb.like(cb.lower(root.get("name")), "%" + student.getName().toLowerCase() + "%"));
                 }
 
-                if(student.getSection() != null && student.getSection().getClasS() != null){
-                    predicates.add(cb.equal(root.get("section").<Class> get("clasS"), student.getSection().getClasS()));
+                if (student.getSection() != null && student.getSection().getClasS() != null) {
+                    predicates.add(cb.equal(root.get("section").<Class>get("clasS"), student.getSection().getClasS()));
                 }
 
-                if(student.getSection() != null && student.getSection().getId() != null){
-                    predicates.add(cb.equal(root.get("section"), student.getSection() ));
+                if (student.getSection() != null && student.getSection().getId() != null) {
+                    predicates.add(cb.equal(root.get("section"), student.getSection()));
                 }
 
-                if(student.getAcademicYear() != null){
-                    predicates.add(cb.equal(root.get("academicYear"), student.getAcademicYear() ));
+                if (student.getAcademicYear() != null) {
+                    predicates.add(cb.equal(root.get("academicYear"), student.getAcademicYear()));
                 }
 
-                predicates.add(cb.notEqual(root.get("status"), statusRepo.findStatusByCode("DELETED") ));
+                predicates.add(cb.notEqual(root.get("status"), statusRepo.findStatusByCode("DELETED")));
 
                 return cb.and(predicates.toArray(new Predicate[0]));
             }
-        },pageable);
+        }, pageable);
 
         return studentPage;
     }
@@ -101,20 +101,20 @@ public class StudentServiceImpl implements StudentService {
 
         AcademicYear currentAcademicYear = academicYearRepo.findAcademicYearById(student.getAcademicYear().getId());
 
-        if(currentAcademicYear == null){
-            throw new ResourceException(HttpStatus.NOT_FOUND,"academic_year_not_found");
+        if (currentAcademicYear == null) {
+            throw new ResourceException(HttpStatus.NOT_FOUND, "academic_year_not_found");
         }
 
-        Student currentStudent = studentRepo.findStudentByNationalNumberAndAcademicYearAndStatusNot(student.getNationalNumber(),currentAcademicYear, statusRepo.findStatusByCode("DELETED"));
+        Student currentStudent = studentRepo.findStudentByNationalNumberAndAcademicYearAndStatusNot(student.getNationalNumber(), currentAcademicYear, statusRepo.findStatusByCode("DELETED"));
 
-        if(currentStudent != null){
-            throw new ResourceException(HttpStatus.FOUND,"student_found");
+        if (currentStudent != null) {
+            throw new ResourceException(HttpStatus.FOUND, "student_found");
         }
 
         Section section = sectionRepo.findSectionById(student.getSection().getId());
 
-        if(section == null){
-            throw new ResourceException(HttpStatus.NOT_FOUND,"section_not_found");
+        if (section == null) {
+            throw new ResourceException(HttpStatus.NOT_FOUND, "section_not_found");
         }
 
         student.setAcademicYear(currentAcademicYear);
@@ -128,23 +128,23 @@ public class StudentServiceImpl implements StudentService {
     public Student update(Student student) {
         AcademicYear currentAcademicYear = academicYearRepo.findAcademicYearById(student.getAcademicYear().getId());
 
-        if(currentAcademicYear == null){
-            throw new ResourceException(HttpStatus.NOT_FOUND,"academic_year_not_found");
+        if (currentAcademicYear == null) {
+            throw new ResourceException(HttpStatus.NOT_FOUND, "academic_year_not_found");
         }
 
         Student updateStudent = studentRepo.findStudentById(student.getId());
 
-        if(updateStudent == null){
-            throw new ResourceException(HttpStatus.NOT_FOUND,"student_not_found");
+        if (updateStudent == null) {
+            throw new ResourceException(HttpStatus.NOT_FOUND, "student_not_found");
         }
 
         Section section = sectionRepo.findSectionById(student.getSection().getId());
 
-        if(section == null){
-            throw new ResourceException(HttpStatus.NOT_FOUND,"section_not_found");
+        if (section == null) {
+            throw new ResourceException(HttpStatus.NOT_FOUND, "section_not_found");
         }
 
-        Student currentStudent = studentRepo.findStudentByNationalNumberAndAcademicYearAndStatusNot(student.getNationalNumber(),currentAcademicYear, statusRepo.findStatusByCode("DELETED"));
+        Student currentStudent = studentRepo.findStudentByNationalNumberAndAcademicYearAndStatusNot(student.getNationalNumber(), currentAcademicYear, statusRepo.findStatusByCode("DELETED"));
 
         if (currentStudent != null && !currentStudent.getId().equals(student.getId())) {
             throw new ResourceException(HttpStatus.FOUND, "student_found");
@@ -163,8 +163,8 @@ public class StudentServiceImpl implements StudentService {
     public Student delete(Student student) {
         Student currentStudent = studentRepo.findStudentById(student.getId());
 
-        if(currentStudent == null){
-            throw new ResourceException(HttpStatus.NOT_FOUND,"student_not_found");
+        if (currentStudent == null) {
+            throw new ResourceException(HttpStatus.NOT_FOUND, "student_not_found");
         }
 
         currentStudent.setStatus(statusRepo.findStatusByCode("DELETED"));
@@ -179,5 +179,15 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student findStudentById(Long id) {
         return studentRepo.findStudentById(id);
+    }
+
+    @Override
+    public Student findStudentByNationalNumberAndAcademicYearAndStatusNot(String nationalNumber, AcademicYear academicYear, Status status) {
+        return studentRepo.findStudentByNationalNumberAndAcademicYearAndStatusNot(nationalNumber, academicYear, status);
+    }
+
+    @Override
+    public List<Student> saveAll(List<Student> studentList) {
+        return (List<Student>) studentRepo.saveAll(studentList);
     }
 }

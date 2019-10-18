@@ -1,18 +1,15 @@
 package com.decoders.school.controller;
 
+import com.decoders.school.Utils.StudentExcelFile;
 import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
-import com.decoders.school.entities.Announcement;
-import com.decoders.school.entities.AnnouncementType;
-import com.decoders.school.entities.School;
-import com.decoders.school.entities.Status;
+import com.decoders.school.entities.*;
+import com.decoders.school.exception.ResourceException;
 import com.decoders.school.resource.AnnouncementResource;
+import com.decoders.school.resource.MobileDeviceResource;
 import com.decoders.school.resource.PageResource;
 import com.decoders.school.resource.SchoolResource;
-import com.decoders.school.service.AnnouncementService;
-import com.decoders.school.service.AnnouncementTypeService;
-import com.decoders.school.service.SchoolService;
-import com.decoders.school.service.StatusService;
+import com.decoders.school.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -39,6 +36,9 @@ public class PublicController {
 
     @Autowired
     private StatusService statusService;
+
+    @Autowired
+    private MobileDeviceService mobileDeviceService;
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     public ResponseEntity<MessageBody> findSchoolData(HttpServletRequest request) {
@@ -74,6 +74,25 @@ public class PublicController {
         messageBody.setStatus("200");
         messageBody.setText("OK");
         messageBody.setBody(new PageResource(announcementList.getTotalElements(), announcementList.getTotalPages(), AnnouncementResource.toResource(announcementList.getContent())));
+        return new ResponseEntity<>(messageBody, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/register/token", method = RequestMethod.POST)
+    public ResponseEntity<MessageBody> registerToken(@RequestBody MobileDeviceResource mobileDeviceResource) {
+
+        if (mobileDeviceResource.getToken() == null
+                || mobileDeviceResource.getPlatform() == null) {
+            throw new ResourceException(HttpStatus.BAD_REQUEST, "invalid_request");
+        }
+
+        mobileDeviceService.save(mobileDeviceResource.toMobileDevice());
+
+        MessageBody messageBody = MessageBody.getInstance();
+
+        messageBody.setStatus("200");
+        messageBody.setText("OK");
+        messageBody.setBody(null);
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
 }

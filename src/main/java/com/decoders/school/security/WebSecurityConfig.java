@@ -1,6 +1,8 @@
 package com.decoders.school.security;
 
+import com.decoders.school.Utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,8 +24,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtUnAuthenticationEntryPoint jwtUnAuthenticationEntryPoint;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        Utils.setApplicationContext(applicationContext);
 
         http.addFilterBefore(new SimpleCORSFilter(), ChannelProcessingFilter.class);
 

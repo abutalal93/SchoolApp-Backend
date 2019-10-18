@@ -17,6 +17,8 @@ public interface StudentRepo extends CrudRepository<Student, Long> , JpaSpecific
 
     public Student save(Student student);
 
+    public Iterable<Student> saveAll(Iterable studentList);
+
     public Student findStudentById(Long id);
 
     public List<Student> findStudentBySection(Section section);

@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface StudentAnnouncementService {
     public StudentAnnouncement createStudentAnnoucment(StudentAnnouncement studentAnnouncement);
+    public Page<StudentAnnouncement> findAll(StudentAnnouncement studentAnnouncementSearchCriteria, Integer page, Integer size);
 }

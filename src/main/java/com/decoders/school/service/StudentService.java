@@ -1,5 +1,6 @@
 package com.decoders.school.service;
 
+import com.decoders.school.entities.AcademicYear;
 import com.decoders.school.entities.Status;
 import com.decoders.school.entities.Student;
 import org.springframework.data.domain.Page;
@@ -22,4 +23,7 @@ public interface StudentService {
 
     public Student findStudentById(Long id);
 
+    public Student findStudentByNationalNumberAndAcademicYearAndStatusNot(String nationalNumber , AcademicYear academicYear, Status status);
+
+    public List<Student> saveAll(List<Student> studentList);
 }
