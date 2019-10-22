@@ -1,5 +1,7 @@
 package com.decoders.school.controller;
 
+import com.decoders.school.Utils.NotificationMessage;
+import com.decoders.school.Utils.PushNotificationHandler;
 import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
 import com.decoders.school.entities.Otp;
@@ -13,6 +15,7 @@ import com.decoders.school.resource.SchoolResource;
 import com.decoders.school.security.JwtTokenProvider;
 import com.decoders.school.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +47,9 @@ public class AuthController {
     @Autowired
     private ParentService parentService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<MessageBody> loginSchoolAdmin(HttpServletRequest request, @RequestBody SchoolResource schoolResource) {
 
@@ -54,7 +60,7 @@ public class AuthController {
 
         School school = schoolService.findSchoolByUsername(schoolResource.getUsername());
 
-        if(school == null){
+        if (school == null) {
             throw new ResourceException(HttpStatus.UNAUTHORIZED, "invalid_login");
         }
 
@@ -101,6 +107,18 @@ public class AuthController {
         messageBody.setStatus("200");
         messageBody.setText("OK");
         messageBody.setBody(OtpResource.toResource(otp));
+
+        new Thread() {
+            public void run() {
+                System.out.println("push thread start");
+                NotificationMessage notificationMessage = new NotificationMessage();
+                notificationMessage.setMobileNumber(validMobile);
+                notificationMessage.setBody("رمز التحقق الخاص بك هو: " + otp.getCode() + "\n" +
+                        "أغلق هذه الرسالة وادخل في التطبيق لتنشيط حسابك");
+                notificationMessage.setApplicationContext(applicationContext);
+                PushNotificationHandler.sendSms(notificationMessage);
+            }
+        }.start();
 
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }

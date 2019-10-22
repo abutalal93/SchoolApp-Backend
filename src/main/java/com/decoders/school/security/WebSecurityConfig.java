@@ -1,10 +1,12 @@
 package com.decoders.school.security;
 
+import com.decoders.school.Utils.PushNotificationHandler;
 import com.decoders.school.Utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -26,6 +28,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private Environment environment;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

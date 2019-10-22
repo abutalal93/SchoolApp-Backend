@@ -1,5 +1,6 @@
 package com.decoders.school.controller;
 
+import com.decoders.school.Utils.NotificationMessage;
 import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
 import com.decoders.school.entities.*;
@@ -198,10 +199,10 @@ public class AnnouncementController {
 
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ResponseEntity<MessageBody> findAll(HttpServletRequest request,
-                                                          @RequestParam(value = "title", required = false) String title,
-                                                          @RequestParam(value = "type", required = false) String type,
-                                                          @RequestParam(value = "page", required = false) Integer page,
-                                                          @RequestParam(value = "size", required = false) Integer size) {
+                                               @RequestParam(value = "title", required = false) String title,
+                                               @RequestParam(value = "type", required = false) String type,
+                                               @RequestParam(value = "page", required = false) Integer page,
+                                               @RequestParam(value = "size", required = false) Integer size) {
 
         AnnouncementType announcementType = announcementTypeService.findAnnouncementTypeByCode(type);
 
@@ -224,10 +225,10 @@ public class AnnouncementController {
 
     @RequestMapping(value = "/findByStudent", method = RequestMethod.GET)
     public ResponseEntity<MessageBody> findByStudent(HttpServletRequest request,
-                                                          @RequestParam(value = "studentId", required = false) Long studentId,
-                                                          @RequestParam(value = "type", required = false) String type,
-                                                          @RequestParam(value = "page", required = false) Integer page,
-                                                          @RequestParam(value = "size", required = false) Integer size) {
+                                                     @RequestParam(value = "studentId", required = false) Long studentId,
+                                                     @RequestParam(value = "type", required = false) String type,
+                                                     @RequestParam(value = "page", required = false) Integer page,
+                                                     @RequestParam(value = "size", required = false) Integer size) {
 
         AnnouncementType announcementType = announcementTypeService.findAnnouncementTypeByCode(type);
 
