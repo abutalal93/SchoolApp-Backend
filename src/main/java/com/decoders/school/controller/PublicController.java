@@ -1,5 +1,7 @@
 package com.decoders.school.controller;
 
+import com.decoders.school.Utils.NotificationMessage;
+import com.decoders.school.Utils.PushNotificationHandler;
 import com.decoders.school.Utils.StudentExcelFile;
 import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
@@ -10,7 +12,9 @@ import com.decoders.school.resource.MobileDeviceResource;
 import com.decoders.school.resource.PageResource;
 import com.decoders.school.resource.SchoolResource;
 import com.decoders.school.service.*;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +43,9 @@ public class PublicController {
 
     @Autowired
     private MobileDeviceService mobileDeviceService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     public ResponseEntity<MessageBody> findSchoolData(HttpServletRequest request) {
@@ -87,6 +94,60 @@ public class PublicController {
         }
 
         mobileDeviceService.save(mobileDeviceResource.toMobileDevice());
+
+        MessageBody messageBody = MessageBody.getInstance();
+
+        messageBody.setStatus("200");
+        messageBody.setText("OK");
+        messageBody.setBody(null);
+        return new ResponseEntity<>(messageBody, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/announcement/findById", method = RequestMethod.GET)
+    public ResponseEntity<MessageBody> findById(HttpServletRequest request,
+                                                @RequestParam(value = "id", required = false) Long id) {
+
+        Announcement announcementSearchCriteria = new Announcement();
+        announcementSearchCriteria.setId(id);
+
+        Page<Announcement> announcementPage = announcementService.findAll(announcementSearchCriteria, null, null);
+
+        PageResource pageResource = new PageResource();
+        pageResource.setCount(announcementPage.getTotalElements());
+        pageResource.setNumberOfPages(announcementPage.getTotalPages());
+        pageResource.setPageList(AnnouncementResource.toResource(announcementPage.getContent()));
+
+        MessageBody messageBody = MessageBody.getInstance();
+
+        messageBody.setStatus("200");
+        messageBody.setText("OK");
+        messageBody.setBody(pageResource);
+
+        return new ResponseEntity<>(messageBody, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/send/push", method = RequestMethod.GET)
+    public ResponseEntity<MessageBody> testPush(
+            @RequestParam(value = "token", required = false) String token) {
+
+
+        NotificationMessage notificationMessage = new NotificationMessage();
+        notificationMessage.setTitle("مرحبا");
+        notificationMessage.setBody("السلام عليكم ");
+        notificationMessage.setTopic("/topics/public");
+        notificationMessage.setToken(token);
+
+
+        JSONObject dataJsonObject = new JSONObject();
+        dataJsonObject.put("id", 15);
+        dataJsonObject.put("type", "PUBLIC");
+
+        notificationMessage.setData(dataJsonObject.toString());
+        notificationMessage.setApplicationContext(applicationContext);
+
+        PushNotificationHandler.sendNotification(notificationMessage);
 
         MessageBody messageBody = MessageBody.getInstance();
 

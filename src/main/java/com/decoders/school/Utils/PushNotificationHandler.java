@@ -25,7 +25,7 @@ public class PushNotificationHandler {
 
         if(notificationMessage.getToken() == null || notificationMessage.getToken().isEmpty()){
             //send to topic
-            fcmJsonRequest.put("topic", notificationMessage.getTopic());
+            fcmJsonRequest.put("to", notificationMessage.getTopic());
         }else{
             //send to token
             fcmJsonRequest.put("to", notificationMessage.getToken());
@@ -37,6 +37,10 @@ public class PushNotificationHandler {
 
         System.out.println("json req: " + fcmJsonRequest.toString());
 
+        String serverKey = notificationMessage.getApplicationContext().getEnvironment().getProperty("fcm_key");
+
+        System.out.println("serverKey: "+serverKey);
+
         MediaType mediaType = MediaType.parse("application/json;charset=utf-8");
 
         RequestBody body = RequestBody.create(mediaType, (fcmJsonRequest.toString()));
@@ -45,7 +49,7 @@ public class PushNotificationHandler {
                 .url(notificationMessage.getApplicationContext().getEnvironment().getProperty("fcm_url"))
                 .post(body)
                 .addHeader("Content-Type", "application/json;charset=utf-8")
-                .addHeader("Authorization", "key=" + notificationMessage.getApplicationContext().getEnvironment().getProperty("fcm_key"))
+                .addHeader("Authorization", "key=" + serverKey)
                 .addHeader("cache-control", "no-cache")
                 .build();
 
@@ -54,6 +58,7 @@ public class PushNotificationHandler {
         try {
             response = client.newCall(request).execute();
             responseCode = String.valueOf(response.code());
+            System.out.println("body:::>>>"+response.body().toString());
         } catch (IOException e) {
             e.printStackTrace();
             if (response != null)
