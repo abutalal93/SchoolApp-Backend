@@ -310,7 +310,7 @@ public class DatabaseSeeder {
         studenta.setCreateDate(Utils.getCurrentDateTimeJordan());
         studenta.setFatherMobile("+962786789496");
         studenta.setMotherMobile("+962786789496");
-        studenta.setGender("Male");
+        studenta.setGender("male");
         studenta.setSection(a1Section);
         studenta.setAcademicYear(academicYear);
         studenta.setNationalNumber("9931065088");
@@ -322,7 +322,7 @@ public class DatabaseSeeder {
         studentb.setCreateDate(Utils.getCurrentDateTimeJordan());
         studentb.setFatherMobile("+962796983230");
         studentb.setMotherMobile("+962796983230");
-        studentb.setGender("Male");
+        studentb.setGender("male");
         studentb.setSection(a1Section);
         studentb.setAcademicYear(academicYear);
         studentb.setNationalNumber("9941065088");
