@@ -1,6 +1,7 @@
 package com.decoders.school.controller;
 
 import com.decoders.school.Utils.NotificationMessage;
+import com.decoders.school.Utils.PushNotificationHandler;
 import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
 import com.decoders.school.entities.*;
@@ -11,6 +12,7 @@ import com.decoders.school.resource.PageResource;
 import com.decoders.school.resource.StudentResource;
 import com.decoders.school.security.JwtTokenProvider;
 import com.decoders.school.service.*;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -169,6 +171,13 @@ public class AnnouncementController {
                 throw new ResourceException(HttpStatus.BAD_REQUEST, "request_null");
         }
 
+        Announcement finalAnnouncement = announcement;
+        new Thread() {
+            public void run() {
+                announcementService.notifyAnnoucment(finalAnnouncement);
+            }
+        }.start();
+
         MessageBody messageBody = MessageBody.getInstance();
         messageBody.setStatus("200");
         messageBody.setText("OK");
@@ -210,6 +219,7 @@ public class AnnouncementController {
         announcement.setTitle(title);
         announcement.setAnnouncementType(announcementType);
         announcement.setStatus(statusService.findStatusByCode("ACTIVE"));
+        announcement.setExpireDate(LocalDateTime.now());
 
         Page<Announcement> announcementList = announcementService.findAll(announcement, page, size);
 
@@ -256,6 +266,31 @@ public class AnnouncementController {
         messageBody.setText("OK");
         messageBody.setBody(pageResource);
 
+        return new ResponseEntity<>(messageBody, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/notify", method = RequestMethod.POST)
+    public ResponseEntity<MessageBody> sendNotificationAnnoucment(@RequestBody AnnouncementResource announcementResource) {
+
+
+        if (announcementResource.getId() == null) {
+            throw new ResourceException(HttpStatus.BAD_REQUEST, "invalid_request");
+        }
+
+        Announcement announcement = announcementResource.toAnnouncement();
+
+        new Thread() {
+            public void run() {
+                announcementService.notifyAnnoucment(announcement);
+            }
+        }.start();
+
+        MessageBody messageBody = MessageBody.getInstance();
+
+        messageBody.setStatus("200");
+        messageBody.setText("OK");
+        messageBody.setBody(null);
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
 }

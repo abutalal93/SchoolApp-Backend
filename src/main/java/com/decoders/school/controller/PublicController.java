@@ -2,13 +2,11 @@ package com.decoders.school.controller;
 
 import com.decoders.school.Utils.NotificationMessage;
 import com.decoders.school.Utils.PushNotificationHandler;
-import com.decoders.school.Utils.StudentExcelFile;
 import com.decoders.school.Utils.Utils;
 import com.decoders.school.config.MessageBody;
 import com.decoders.school.entities.*;
 import com.decoders.school.exception.ResourceException;
 import com.decoders.school.resource.AnnouncementResource;
-import com.decoders.school.resource.MobileDeviceResource;
 import com.decoders.school.resource.PageResource;
 import com.decoders.school.resource.SchoolResource;
 import com.decoders.school.service.*;
@@ -21,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @CrossOrigin
@@ -41,8 +38,8 @@ public class PublicController {
     @Autowired
     private StatusService statusService;
 
-    @Autowired
-    private MobileDeviceService mobileDeviceService;
+//    @Autowired
+//    private MobileDeviceService mobileDeviceService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -85,25 +82,6 @@ public class PublicController {
     }
 
 
-    @RequestMapping(value = "/register/token", method = RequestMethod.POST)
-    public ResponseEntity<MessageBody> registerToken(@RequestBody MobileDeviceResource mobileDeviceResource) {
-
-        if (mobileDeviceResource.getToken() == null
-                || mobileDeviceResource.getPlatform() == null) {
-            throw new ResourceException(HttpStatus.BAD_REQUEST, "invalid_request");
-        }
-
-        mobileDeviceService.save(mobileDeviceResource.toMobileDevice());
-
-        MessageBody messageBody = MessageBody.getInstance();
-
-        messageBody.setStatus("200");
-        messageBody.setText("OK");
-        messageBody.setBody(null);
-        return new ResponseEntity<>(messageBody, HttpStatus.OK);
-    }
-
-
     @RequestMapping(value = "/announcement/findById", method = RequestMethod.GET)
     public ResponseEntity<MessageBody> findById(HttpServletRequest request,
                                                 @RequestParam(value = "id", required = false) Long id) {
@@ -124,36 +102,6 @@ public class PublicController {
         messageBody.setText("OK");
         messageBody.setBody(pageResource);
 
-        return new ResponseEntity<>(messageBody, HttpStatus.OK);
-    }
-
-
-    @RequestMapping(value = "/send/push", method = RequestMethod.GET)
-    public ResponseEntity<MessageBody> testPush(
-            @RequestParam(value = "token", required = false) String token) {
-
-
-        NotificationMessage notificationMessage = new NotificationMessage();
-        notificationMessage.setTitle("مرحبا");
-        notificationMessage.setBody("السلام عليكم ");
-        notificationMessage.setTopic("/topics/public");
-        notificationMessage.setToken(token);
-
-
-        JSONObject dataJsonObject = new JSONObject();
-        dataJsonObject.put("id", 15);
-        dataJsonObject.put("type", "PUBLIC");
-
-        notificationMessage.setData(dataJsonObject.toString());
-        notificationMessage.setApplicationContext(applicationContext);
-
-        PushNotificationHandler.sendNotification(notificationMessage);
-
-        MessageBody messageBody = MessageBody.getInstance();
-
-        messageBody.setStatus("200");
-        messageBody.setText("OK");
-        messageBody.setBody(null);
         return new ResponseEntity<>(messageBody, HttpStatus.OK);
     }
 }

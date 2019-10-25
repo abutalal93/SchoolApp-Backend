@@ -1,9 +1,6 @@
 package com.decoders.school.repository;
 
-import com.decoders.school.entities.AcademicYear;
-import com.decoders.school.entities.Section;
-import com.decoders.school.entities.Student;
-import com.decoders.school.entities.Status;
+import com.decoders.school.entities.*;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -27,4 +24,7 @@ public interface StudentRepo extends CrudRepository<Student, Long> , JpaSpecific
 
     @Query("select distinct std from Student std where (std.fatherMobile=:mobile or std.motherMobile=:mobile) and std.status=:status")
     public List<Student> findStudent(@Param("mobile") String mobile, @Param("status") Status status);
+
+    @Query("select stdAnc.student from StudentAnnouncement stdAnc where stdAnc.announcement=:announcement and stdAnc.student.status.id <> 3 and stdAnc.announcement.status <> 3")
+    public List<Student> findStudent(@Param("announcement") Announcement announcement);
 }

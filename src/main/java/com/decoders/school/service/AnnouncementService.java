@@ -14,4 +14,6 @@ public interface AnnouncementService {
     public Announcement save(Announcement announcement);
 
     public Announcement delete(Announcement announcement);
+
+    public void notifyAnnoucment(Announcement announcement);
 }
