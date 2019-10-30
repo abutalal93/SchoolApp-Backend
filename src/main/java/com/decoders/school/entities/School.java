@@ -67,6 +67,8 @@ public class School implements Serializable {
     @Column(name = "scl_about_image")
     private String aboutImage;
 
+    @Column(name = "scl_calender_image")
+    private String calenderImage;
 
     public Long getId() {
         return id;
@@ -210,5 +212,13 @@ public class School implements Serializable {
 
     public void setAboutImage(String aboutImage) {
         this.aboutImage = aboutImage;
+    }
+
+    public String getCalenderImage() {
+        return calenderImage;
+    }
+
+    public void setCalenderImage(String calenderImage) {
+        this.calenderImage = calenderImage;
     }
 }

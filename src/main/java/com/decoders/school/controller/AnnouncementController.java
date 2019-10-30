@@ -63,8 +63,8 @@ public class AnnouncementController {
 
         if (announcementResource.getTitle() == null
                 || announcementResource.getText() == null
-                || announcementResource.getImageList() == null
-                || announcementResource.getImageList().isEmpty()
+//                || announcementResource.getImageList() == null
+//                || announcementResource.getImageList().isEmpty()
                 || announcementResource.getExpireDate() == null
                 || announcementResource.getAnnouncementTypeCode() == null) {
             throw new ResourceException(HttpStatus.BAD_REQUEST, "request_null");
@@ -90,7 +90,7 @@ public class AnnouncementController {
             case "PUBLIC":
                 announcement = announcementService.save(announcementResource.toAnnouncement());
 
-                List<AnnouncementImage> announcementImageList = new ArrayList<>(announcementResource.getImageList().size());
+                List<AnnouncementImage> announcementImageList = new ArrayList<>();
 
                 for (AnnouncementImageResource announcementImageResource : announcementResource.getImageList()) {
                     announcementImageResource.setUrl(Utils.archiveFile(environment.getProperty("attachment_url"), environment.getProperty("attachment_path"), announcementImageResource.getUrl()));
@@ -110,7 +110,7 @@ public class AnnouncementController {
 
                 announcement = announcementService.save(announcementResource.toAnnouncement());
 
-                announcementImageList = new ArrayList<>(announcementResource.getImageList().size());
+                announcementImageList = new ArrayList<>();
 
                 for (AnnouncementImageResource announcementImageResource : announcementResource.getImageList()) {
                     announcementImageResource.setUrl(Utils.archiveFile(environment.getProperty("attachment_url"), environment.getProperty("attachment_path"), announcementImageResource.getUrl()));
@@ -143,7 +143,7 @@ public class AnnouncementController {
 
                 announcement = announcementService.save(announcementResource.toAnnouncement());
 
-                announcementImageList = new ArrayList<>(announcementResource.getImageList().size());
+                announcementImageList = new ArrayList<>();
 
                 for (AnnouncementImageResource announcementImageResource : announcementResource.getImageList()) {
                     announcementImageResource.setUrl(Utils.archiveFile(environment.getProperty("attachment_url"), environment.getProperty("attachment_path"), announcementImageResource.getUrl()));

@@ -47,6 +47,8 @@ public class SchoolResource {
 
     private String aboutImage;
 
+    private String calenderImage;
+
     public Long getId() {
         return id;
     }
@@ -199,6 +201,14 @@ public class SchoolResource {
         this.aboutImage = aboutImage;
     }
 
+    public String getCalenderImage() {
+        return calenderImage;
+    }
+
+    public void setCalenderImage(String calenderImage) {
+        this.calenderImage = calenderImage;
+    }
+
     public static SchoolResource toResource(School school)
     {
         SchoolResource schoolResource = new SchoolResource();
@@ -218,6 +228,7 @@ public class SchoolResource {
         schoolResource.setLongitude(school.getLongitude());
         schoolResource.setAboutImage(school.getAboutImage());
         schoolResource.setAboutText(school.getAboutText());
+        schoolResource.setCalenderImage(school.getCalenderImage());
 
         if(school.getStatus() != null) {
             schoolResource.setStatusId(school.getStatus().getId());

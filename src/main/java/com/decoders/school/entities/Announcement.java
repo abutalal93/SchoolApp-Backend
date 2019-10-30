@@ -28,6 +28,9 @@ public class Announcement implements Serializable {
     @Column(name = "annc_expire_date")
     private LocalDateTime expireDate;
 
+    @Column(name = "annc_facebook_url", columnDefinition = "LONGTEXT")
+    private String facebookUrl;
+
     @OneToOne
     @JoinColumn(name = "annc_sts_id", nullable = false)
     private Status status;
@@ -101,5 +104,13 @@ public class Announcement implements Serializable {
 
     public void setAnnouncementImageList(List<AnnouncementImage> announcementImageList) {
         this.announcementImageList = announcementImageList;
+    }
+
+    public String getFacebookUrl() {
+        return facebookUrl;
+    }
+
+    public void setFacebookUrl(String facebookUrl) {
+        this.facebookUrl = facebookUrl;
     }
 }

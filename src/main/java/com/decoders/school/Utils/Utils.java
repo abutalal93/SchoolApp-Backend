@@ -96,11 +96,12 @@ public class Utils {
 
             ImageIO.write(bufferedImageCover, coverExtention, outputfile);
 
-            String coverPhotoUrl = host + currentTimeStampCover + "." + coverExtention;//amazonS3ClientService.getFileUrl(currentTimeStampCover + "." + coverExtention);
+            String coverPhotoUrl = host + currentTimeStampCover + "." + coverExtention;
 
             return coverPhotoUrl;
 
         } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
     }

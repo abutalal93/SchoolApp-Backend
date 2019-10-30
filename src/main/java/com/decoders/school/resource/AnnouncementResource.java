@@ -31,6 +31,8 @@ public class AnnouncementResource {
 
     private String announcementTypeCode;
 
+    private String facebookUrl;
+
     public Long getId() {
         return id;
     }
@@ -119,6 +121,14 @@ public class AnnouncementResource {
         this.studentList = studentList;
     }
 
+    public String getFacebookUrl() {
+        return facebookUrl;
+    }
+
+    public void setFacebookUrl(String facebookUrl) {
+        this.facebookUrl = facebookUrl;
+    }
+
     public static AnnouncementResource toResource(Announcement annoucment)
     {
         AnnouncementResource annoucmentResource = new AnnouncementResource();
@@ -128,6 +138,7 @@ public class AnnouncementResource {
         annoucmentResource.setExpireDate(annoucment.getExpireDate());
         annoucmentResource.setTitle(annoucment.getTitle());
         annoucmentResource.setText(annoucment.getText());
+        annoucmentResource.setFacebookUrl(annoucment.getFacebookUrl());
 
         if(annoucment.getStatus() != null) {
             annoucmentResource.setStatusId(annoucment.getStatus().getId());
@@ -172,6 +183,7 @@ public class AnnouncementResource {
         announcement.setExpireDate(this.expireDate);
         announcement.setText(this.text);
         announcement.setTitle(this.title);
+        announcement.setFacebookUrl(this.facebookUrl);
 
         if (announcementTypeId != null || announcementTypeCode !=null){
             AnnouncementType announcementType = new AnnouncementType();

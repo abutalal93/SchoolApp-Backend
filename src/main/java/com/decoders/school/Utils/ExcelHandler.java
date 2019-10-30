@@ -136,7 +136,7 @@ public class ExcelHandler {
 
         DataFormatter dataFormatter = new DataFormatter();
 
-        for (int rowIndex = 2; rowIndex < sheet.getLastRowNum(); rowIndex++) {
+        for (int rowIndex = 2; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
 
             System.out.println("rowIndex: "+rowIndex+" sheet max row: "+sheet.getLastRowNum());
 
@@ -154,16 +154,16 @@ public class ExcelHandler {
             Cell studentNameCell = studentRow.getCell(0);
 
             if (studentNameCell == null) {
-                ExcelError excelError = new ExcelError(Integer.toString(rowIndex + 1), "1", sheet.getSheetName(), "Invalid student name cell", "خطأ في خلية اسم الطالب");
-                excelErrorList.add(excelError);
+//                ExcelError excelError = new ExcelError(Integer.toString(rowIndex + 1), "1", sheet.getSheetName(), "Invalid student name cell", "خطأ في خلية اسم الطالب");
+//                excelErrorList.add(excelError);
                 return;
             }
 
             String studentNameValue = dataFormatter.formatCellValue(studentNameCell);
 
             if (studentNameValue == null || studentNameValue.isEmpty()) {
-                ExcelError excelError = new ExcelError(Integer.toString(rowIndex + 1), "1", sheet.getSheetName(), "Invalid student name cell", "خطأ في خلية اسم الطالب");
-                excelErrorList.add(excelError);
+//                ExcelError excelError = new ExcelError(Integer.toString(rowIndex + 1), "1", sheet.getSheetName(), "Invalid student name cell", "خطأ في خلية اسم الطالب");
+//                excelErrorList.add(excelError);
                 return;
             }
 

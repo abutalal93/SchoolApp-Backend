@@ -36,9 +36,9 @@ public class DatabaseSeeder {
     private StudentRepo studentRepo;
 
     public void seed() {
-//        seedStatusTable();
+        seedStatusTable();
         seedSchoolTable();
-//        seedAnnouncementTypeTable();
+        seedAnnouncementTypeTable();
 //        seedAcademicYear();
 //        seedClass();
 //        seedSection();
@@ -73,7 +73,7 @@ public class DatabaseSeeder {
 
         Status activeStatus = statusRepo.findStatusByCode("ACTIVE");
 
-        School abdallahSchool = schoolRepo.findAll().get(0);
+        School abdallahSchool = new School();
 
         abdallahSchool.setCode("1001");
         abdallahSchool.setChairmanMessage("من نحن\n" +
@@ -184,6 +184,7 @@ public class DatabaseSeeder {
                 "الفترة الأولى  موضوعها الإنسان \t\t\t\tالفترة الثانية موضوعها الكائنات الحية\n" +
                 "الفترة الثالثة موضوعها الكون والأرض\t\t\t\tالفترة الرابعة موضوعها \n");
 
+        abdallahSchool.setCalenderImage("https://i.ibb.co/qxV5PxY/feneq-logo.png");
         schoolRepo.save(abdallahSchool);
     }
 

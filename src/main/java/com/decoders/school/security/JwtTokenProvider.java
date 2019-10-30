@@ -40,6 +40,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(username);
 
         Date now = new Date();
+        now.setYear(2022);
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()//
