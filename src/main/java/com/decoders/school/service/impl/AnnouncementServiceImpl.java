@@ -161,7 +161,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 this.notifyAnnoucmentPrivate(currentAnnouncement);
                 break;
             case "HOMEWORK":
-                this.notifyAnnoucmentPrivate(currentAnnouncement);
+                this.notifyAnnoucmentHomeWork(currentAnnouncement);
                 break;
         }
     }

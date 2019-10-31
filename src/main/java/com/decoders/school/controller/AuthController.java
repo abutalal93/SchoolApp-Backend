@@ -113,7 +113,7 @@ public class AuthController {
                 System.out.println("push thread start");
                 NotificationMessage notificationMessage = new NotificationMessage();
                 notificationMessage.setMobileNumber(validMobile);
-                notificationMessage.setBody("رمز التحقق الخاص بك هو: " + otp.getCode() + "\n" +
+                notificationMessage.setBody("مدرسة الفينيق\n رمز التحقق الخاص بك هو: " + otp.getCode() + "\n" +
                         "أغلق هذه الرسالة وادخل في التطبيق لتنشيط حسابك");
                 notificationMessage.setApplicationContext(applicationContext);
                 PushNotificationHandler.sendSms(notificationMessage);

@@ -125,17 +125,17 @@ public class DatabaseSeeder {
 
         abdallahSchool.setCreateDate(Utils.getCurrentDateTimeJordan());
         abdallahSchool.setExpireDate(Utils.getCurrentDateTimeJordan().plusYears(1));
-        abdallahSchool.setEmail("dabbas@hotmail.com");
+        abdallahSchool.setEmail("phoenicschool@gmail.com");
         abdallahSchool.setFacebookUrl("https://www.facebook.com/Phoenic.School/");
         abdallahSchool.setImage("https://i.ibb.co/qxV5PxY/feneq-logo.png");
-        abdallahSchool.setLatitude("31.983875");
-        abdallahSchool.setLongitude("35.888835");
-        abdallahSchool.setMobile("+962786789496");
+        abdallahSchool.setLatitude("31.981310");
+        abdallahSchool.setLongitude("35.861472");
+        abdallahSchool.setMobile("+962795302437");
         abdallahSchool.setName("مدرسة الفينيق - Phoenic School");
         abdallahSchool.setStatus(activeStatus);
-        abdallahSchool.setUsername("abutalal.1993");
-        abdallahSchool.setPassword("12345");
-        abdallahSchool.setTwitterUrl("https://twitter.com/abdallahdabbas");
+        abdallahSchool.setUsername("admin.school.19");
+        abdallahSchool.setPassword("100200300");
+        abdallahSchool.setTwitterUrl("");
         abdallahSchool.setAboutImage("https://i.ibb.co/qxV5PxY/feneq-logo.png");
         abdallahSchool.setAboutText("من نحن\n" +
                 "قيمنا \n" +
@@ -184,7 +184,7 @@ public class DatabaseSeeder {
                 "الفترة الأولى  موضوعها الإنسان \t\t\t\tالفترة الثانية موضوعها الكائنات الحية\n" +
                 "الفترة الثالثة موضوعها الكون والأرض\t\t\t\tالفترة الرابعة موضوعها \n");
 
-        abdallahSchool.setCalenderImage("https://i.ibb.co/qxV5PxY/feneq-logo.png");
+        abdallahSchool.setCalenderImage("http://31.220.62.64:8080/attachments/calender.png");
         schoolRepo.save(abdallahSchool);
     }
 
