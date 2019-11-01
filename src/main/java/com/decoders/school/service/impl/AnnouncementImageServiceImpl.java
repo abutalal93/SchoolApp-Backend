@@ -37,4 +37,9 @@ public class AnnouncementImageServiceImpl implements AnnouncementImageService {
     public AnnouncementImage save(AnnouncementImage announcementImage) {
         return announcementImageRepo.save(announcementImage);
     }
+
+    @Override
+    public void deleteAllByAnnoucment(Announcement announcement) {
+        announcementImageRepo.deleteAllByAnnouncement(announcement);
+    }
 }

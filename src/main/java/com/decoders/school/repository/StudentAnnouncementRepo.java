@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface StudentAnnouncementRepo extends CrudRepository<StudentAnnouncement, Long> , JpaSpecificationExecutor {
     public StudentAnnouncement save(StudentAnnouncement studentAnnouncement);
+    public List<StudentAnnouncement> findStudentAnnouncementByAnnouncement(Announcement announcement);
+    public void deleteAllByAnnouncement(Announcement announcement);
 }

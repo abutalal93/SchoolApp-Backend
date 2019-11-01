@@ -145,6 +145,28 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
+    public Announcement findById(Long id) {
+        return announcementRepo.findAnnouncementById(id);
+    }
+
+    @Override
+    public Announcement updateAnnoucment(Announcement announcement) {
+
+        Announcement currentAnnoucment = announcementRepo.findAnnouncementById(announcement.getId());
+
+        if(currentAnnoucment == null){
+            throw new ResourceException(HttpStatus.NOT_FOUND, "announcement_not_found");
+        }
+
+        currentAnnoucment.setTitle(announcement.getTitle());
+        currentAnnoucment.setText(announcement.getText());
+        currentAnnoucment.setFacebookUrl(announcement.getFacebookUrl());
+        currentAnnoucment.setExpireDate(announcement.getExpireDate());
+
+        return currentAnnoucment;
+    }
+
+    @Override
     public void notifyAnnoucment(Announcement announcement) {
 
         Announcement currentAnnouncement = announcementRepo.findAnnouncementById(announcement.getId());

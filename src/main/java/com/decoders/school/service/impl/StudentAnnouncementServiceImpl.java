@@ -40,7 +40,7 @@ public class StudentAnnouncementServiceImpl implements StudentAnnouncementServic
     @Override
     public Page<StudentAnnouncement> findAll(StudentAnnouncement studentAnnouncementSearchCriteria, Integer page, Integer size) {
         if (page == null) page = 0;
-        if (size == null) size = 10;
+        if (size == null) size = 1000;
 
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
 
@@ -76,5 +76,15 @@ public class StudentAnnouncementServiceImpl implements StudentAnnouncementServic
         }, pageable);
 
         return studentAnnouncementPage;
+    }
+
+    @Override
+    public List<StudentAnnouncement> findAllByAnnoucment(Announcement announcement) {
+        return studentAnnouncementRepo.findStudentAnnouncementByAnnouncement(announcement);
+    }
+
+    @Override
+    public void deleteAllByAnnoucment(Announcement announcement) {
+        studentAnnouncementRepo.deleteAllByAnnouncement(announcement);
     }
 }

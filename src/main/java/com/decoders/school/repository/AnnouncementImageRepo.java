@@ -9,4 +9,5 @@ import java.util.List;
 public interface AnnouncementImageRepo extends CrudRepository<AnnouncementImage,Long> {
     public List<AnnouncementImage> findAnnouncementImageByAnnouncement(Announcement announcement);
     public AnnouncementImage save(AnnouncementImage announcementImage);
+    public void deleteAllByAnnouncement(Announcement announcement);
 }

@@ -10,4 +10,5 @@ import java.util.List;
 public interface AnnouncementImageService {
     public List<AnnouncementImage> findAnnouncementImageByAnnouncement(Announcement announcement);
     public AnnouncementImage save(AnnouncementImage announcementImage);
+    public void deleteAllByAnnoucment(Announcement announcement);
 }

@@ -1,9 +1,6 @@
 package com.decoders.school.resource;
 
-import com.decoders.school.entities.AcademicYear;
-import com.decoders.school.entities.Section;
-import com.decoders.school.entities.Student;
-import com.decoders.school.entities.Status;
+import com.decoders.school.entities.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -196,6 +193,15 @@ public class StudentResource {
         List<StudentResource> studentResourceList = new ArrayList<>();
         studentList.forEach(student -> {
             StudentResource studentResource = toResource(student);
+            studentResourceList.add(studentResource);
+        });
+        return studentResourceList;
+    }
+
+    public static List<StudentResource> toStudentResource(List<StudentAnnouncement> studentAnnouncementList) {
+        List<StudentResource> studentResourceList = new ArrayList<>();
+        studentAnnouncementList.forEach(studentAnnouncement -> {
+            StudentResource studentResource = toResource(studentAnnouncement.getStudent());
             studentResourceList.add(studentResource);
         });
         return studentResourceList;

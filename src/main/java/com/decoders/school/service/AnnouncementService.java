@@ -15,5 +15,9 @@ public interface AnnouncementService {
 
     public Announcement delete(Announcement announcement);
 
+    public Announcement findById(Long id);
+
+    public Announcement updateAnnoucment(Announcement announcement);
+
     public void notifyAnnoucment(Announcement announcement);
 }
