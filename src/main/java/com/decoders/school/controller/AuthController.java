@@ -93,11 +93,11 @@ public class AuthController {
             throw new ResourceException(HttpStatus.BAD_REQUEST, "mobile_invalid");
         }
 
-        List<Student> studentList = studentService.findStudent(validMobile, statusService.findStatusByCode("ACTIVE"));
-
-        if (studentList == null || studentList.isEmpty()) {
-            throw new ResourceException(HttpStatus.BAD_REQUEST, "no_student_found");
-        }
+//        List<Student> studentList = studentService.findStudent(validMobile, statusService.findStatusByCode("ACTIVE"));
+//
+//        if (studentList == null || studentList.isEmpty()) {
+//            throw new ResourceException(HttpStatus.BAD_REQUEST, "no_student_found");
+//        }
 
         otpResource.setMobile(validMobile);
         Otp otp = otpService.create(otpResource.toOtp());
@@ -113,7 +113,7 @@ public class AuthController {
                 System.out.println("push thread start");
                 NotificationMessage notificationMessage = new NotificationMessage();
                 notificationMessage.setMobileNumber(validMobile);
-                notificationMessage.setBody("مدرسة الفينيق\n رمز التحقق الخاص بك هو: " + otp.getCode() + "\n" +
+                notificationMessage.setBody("رمز التحقق الخاص بك هو: " + otp.getCode() + "\n" +
                         "أغلق هذه الرسالة وادخل في التطبيق لتنشيط حسابك");
                 notificationMessage.setApplicationContext(applicationContext);
                 PushNotificationHandler.sendSms(notificationMessage);
